@@ -9,7 +9,12 @@ export default function SequencerPanel() {
   const sequencer = useSequencerPanel();
 
   return (
-    <Stack gap="xs" style={{ height: "100%" }}>
+    <Stack
+      // must keep the key here as there seems to be a bug in mobx where the sequence runtime is not updated when the playhead doesnt play when the sequence changes
+      key={sequencer.sequence?.sequence._id ?? "no-sequence"}
+      gap="xs"
+      style={{ height: "100%" }}
+    >
       {sequencer.sequence ? (
         <>
           {sequencer.sequence.isPlaying && (
