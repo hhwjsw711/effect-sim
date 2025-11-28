@@ -1,10 +1,11 @@
 import { useFrame } from "../../common/utils/frames";
 import { useSequence } from "../SequencerContext";
+import { useCallback } from "react";
 
-export const SequencerPlayer = () => {
+export function SequencerPlayer() {
   const sequence = useSequence();
 
-  useFrame(() => {
+  const onFrame = useCallback(() => {
     if (!sequence.isPlaying) return;
     sequence.runtime.playhead.stepForwards();
 
@@ -14,5 +15,7 @@ export const SequencerPlayer = () => {
     }
   }, [sequence, sequence.sequence.numFrames]);
 
+  useFrame(onFrame, [sequence, sequence.sequence.numFrames]);
+
   return null;
-};
+}
