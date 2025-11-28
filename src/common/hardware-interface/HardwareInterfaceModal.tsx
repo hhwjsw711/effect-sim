@@ -16,7 +16,7 @@ interface HardwareInterfaceModalProps {
   onClose: () => void;
 }
 
-export const HardwareInterfaceModal = observer(
+export const HardwareInterfaceModal = (
   ({ opened, onClose }: HardwareInterfaceModalProps) => {
     const app = useApp();
     const status = app.hardwareInterfaceRuntime.status;

@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useApp } from "../common/AppContext";
 import { useLedData } from "./LedDataStoreContext";
 
-export const LedDataDispatcher = observer(() => {
+export const LedDataDispatcher = () => {
   const ledDataStore = useLedData();
   const app = useApp();
 
@@ -39,4 +39,4 @@ export const LedDataDispatcher = observer(() => {
   }, [ledDataStore, app.hardwareInterfaceRuntime]);
 
   return null;
-});
+};
