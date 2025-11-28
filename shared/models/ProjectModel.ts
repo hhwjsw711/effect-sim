@@ -116,6 +116,7 @@ export class ProjectModel {
     nightMode?: boolean;
     lightsOnTop?: boolean;
     stringLedSize?: number;
+    cameraControl?: "orbit" | "fly" | "first_person";
   }) {
     if (settings.nightMode !== undefined)
       this.settings.nightMode = settings.nightMode;
@@ -125,6 +126,9 @@ export class ProjectModel {
 
     if (settings.stringLedSize !== undefined)
       this.settings.stringLedSize = settings.stringLedSize;
+
+    if (settings.cameraControl !== undefined)
+      this.settings.cameraControl = settings.cameraControl;
   }
 
   removePlaylist(playlist: PlaylistModel) {

@@ -107,6 +107,13 @@ export default defineSchema({
       nightMode: v.boolean(),
       lightsOnTop: v.boolean(),
       stringLedSize: v.optional(v.number()),
+      cameraControl: v.optional(
+        v.union(
+          v.literal("orbit"),
+          v.literal("fly"),
+          v.literal("first_person"),
+        ),
+      ),
     }),
   }),
 

@@ -1,5 +1,5 @@
 import { ActionIcon, Divider, Group, Menu, Text } from "@mantine/core";
-import { IconEdit, IconExternalLink } from "@tabler/icons-react";
+import { IconEdit, IconExternalLink, IconChevronRight } from "@tabler/icons-react";
 import { useFlexLayout } from "./FlexLayoutProvider";
 import { notifications } from "@mantine/notifications";
 import { useQuery, useMutation } from "convex/react";
@@ -142,6 +142,44 @@ export default function MenuBar() {
                 >
                   {project?.settings.lightsOnTop ? "✓ " : ""}Lights On Top
                 </Menu.Item>
+                <Divider my="sm" />
+                <Menu trigger="hover" positioning={{ placement: "right-start", offset: -5 }}>
+                  <Menu.Target>
+                    <Menu.Item rightSection={<IconChevronRight size={14} />}>
+                      Camera Controls
+                    </Menu.Item>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      onClick={() =>
+                        project?.updateSettings({ cameraControl: "orbit" })
+                      }
+                    >
+                      {(project?.settings.cameraControl === "orbit" ||
+                        !project?.settings.cameraControl) &&
+                        "✓ "}
+                      Orbit
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() =>
+                        project?.updateSettings({ cameraControl: "fly" })
+                      }
+                    >
+                      {project?.settings.cameraControl === "fly" && "✓ "}Fly
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() =>
+                        project?.updateSettings({
+                          cameraControl: "first_person",
+                        })
+                      }
+                    >
+                      {project?.settings.cameraControl === "first_person" &&
+                        "✓ "}
+                      First Person
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               </Menu.Dropdown>
             </Menu>
           </Group>

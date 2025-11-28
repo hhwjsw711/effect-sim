@@ -1,5 +1,9 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import {
+  OrbitControls,
+  FlyControls,
+  FirstPersonControls,
+} from "@react-three/drei";
 import { GardenModel } from "./rendering/GardenModel.tsx";
 import SideToolbar from "./ui/SideToolbar.tsx";
 import MeasureTool from "./measure/MeasureTool.tsx";
@@ -11,6 +15,7 @@ import { NightModeMultiCameraPass } from "./rendering/NightModeMultiCameraPass.t
 import { DayModeMultiCameraPass } from "./rendering/DayModeMultiCameraPass.tsx";
 import { useRef } from "react";
 import { LoadingOverlay } from "./ui/LoadingOverlay";
+import { SimulatorControls } from "./SimulatorControls";
 
 export default function SimulatorPanel() {
   const simulator = useSimulator();
@@ -61,11 +66,12 @@ export default function SimulatorPanel() {
         />
         <GardenModel isDraggingRef={isDraggingRef} />
         <MeasureTool />
+        {app.isMeasureMode ? null : <SimulatorControls />}
         {simulator.placingString && (
           <StringPlacer string={simulator.placingString} />
         )}
         <StringsRenderer />
-        <OrbitControls enableDamping makeDefault enabled={!app.isMeasureMode} />
+
         {project.settings.nightMode ? (
           <NightModeMultiCameraPass
             lightsOnTop={project.settings.lightsOnTop}
