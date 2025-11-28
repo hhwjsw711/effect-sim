@@ -6,14 +6,13 @@ export const HeadlessLedDataDispatcher = () => {
   const ledDataStore = useLedData();
 
   useFrame(() => {
-      for (const [targetId, stringData] of ledDataStore.stringsMap) {
-         onFrameDataSignal.dispatch({
-            forStringId: targetId,
-            rgb: stringData.data
-         });
-      }
+    for (const [targetId, stringData] of ledDataStore.stringsMap) {
+      onFrameDataSignal.dispatch({
+        forStringId: targetId,
+        rgb: stringData.data,
+      });
+    }
   });
 
   return null;
 };
-
