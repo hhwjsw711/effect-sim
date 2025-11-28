@@ -10,6 +10,7 @@ import StringsRenderer from "./StringsRenderer.tsx";
 import { NightModeMultiCameraPass } from "./rendering/NightModeMultiCameraPass.tsx";
 import { DayModeMultiCameraPass } from "./rendering/DayModeMultiCameraPass.tsx";
 import { useRef } from "react";
+import { LoadingOverlay } from "./ui/LoadingOverlay";
 
 export default function SimulatorPanel() {
   const simulator = useSimulator();
@@ -42,6 +43,7 @@ export default function SimulatorPanel() {
         startPosRef.current = null;
       }}
     >
+      <LoadingOverlay />
       <Canvas
         style={{ height: "100%", width: "100%" }}
         camera={{ position: [4, 3, 6], fov: 45 }}
