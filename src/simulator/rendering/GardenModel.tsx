@@ -8,7 +8,7 @@ export function GardenModel({
 }: {
   isDraggingRef?: React.RefObject<boolean>;
 }) {
-  const gltf = useGLTF("/garden02.glb", true);
+  const gltf = useGLTF("/garden04.glb", true, true);
   const appModel = useSimulator().app;
   const ref = useRef<THREE.Object3D>(null);
 
