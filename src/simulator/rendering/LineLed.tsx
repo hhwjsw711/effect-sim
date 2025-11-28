@@ -83,12 +83,14 @@ export function LineLed({
   lightsOnTop = true,
   isSelected = false,
   borderColor,
+  stringLedSize = 0.1,
 }: {
   position: THREE.Vector3;
   materialRef?: (material: THREE.ShaderMaterial) => void;
   lightsOnTop?: boolean;
   isSelected?: boolean;
   borderColor?: "white" | "yellow" | "green";
+  stringLedSize?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const { camera } = useThree();
@@ -142,7 +144,7 @@ export function LineLed({
 
   return (
     <mesh ref={meshRef} position={position} layers={1}>
-      <planeGeometry args={[0.1, 0.1]} />
+      <planeGeometry args={[stringLedSize, stringLedSize]} />
       <primitive object={material} attach="material" />
     </mesh>
   );

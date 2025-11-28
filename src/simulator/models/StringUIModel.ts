@@ -27,6 +27,10 @@ export class StringUIModel {
     return this.string.project?.settings.lightsOnTop ?? true;
   }
 
+  get stringLedSize(): number {
+    return this.string.project?.settings.stringLedSize ?? 0.1;
+  }
+
   // Compute segment lengths for LED allocation
   private get segmentLengths(): number[] {
     const points = this.pathPoints;

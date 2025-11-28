@@ -20,6 +20,7 @@ export function LedStringSegment({
   const ledSelectionInfo = parent.ledSelectionInfo;
   const brightness = parent.string.brightness;
   const lightsOnTop = parent.lightsOnTop;
+  const stringLedSize = parent.stringLedSize;
 
   // Use cached geometry from segment model
   const hasValidGeometry = segment.hasValidGeometry;
@@ -124,6 +125,7 @@ export function LedStringSegment({
             lightsOnTop={lightsOnTop}
             isSelected={ledIsSelected}
             borderColor={ledBorderColor}
+            stringLedSize={stringLedSize}
           />
         );
       })}

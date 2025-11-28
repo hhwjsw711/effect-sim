@@ -106,6 +106,7 @@ export default defineSchema({
     settings: v.object({
       nightMode: v.boolean(),
       lightsOnTop: v.boolean(),
+      stringLedSize: v.optional(v.number()),
     }),
   }),
 

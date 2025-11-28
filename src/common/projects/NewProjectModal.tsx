@@ -25,6 +25,7 @@ export default function NewProjectModal({
         settings: {
           nightMode: false,
           lightsOnTop: false,
+          stringLedSize: 0.1,
         },
       }),
     [],

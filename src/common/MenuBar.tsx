@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import NewProjectModal from "./projects/NewProjectModal";
 import OpenProjectModal from "./projects/OpenProjectModal";
 import WelcomeModal from "./projects/WelcomeModal";
-import EditProjectModal from "./projects/EditProjectModal";
+import ProjectSettingsModal from "./projects/ProjectSettingsModal";
 import { HardwareInterfaceStatus } from "./hardware-interface/HardwareInterfaceStatus";
 
 export default function MenuBar() {
@@ -22,7 +22,7 @@ export default function MenuBar() {
 
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [showOpenProjectModal, setShowOpenProjectModal] = useState(false);
-  const [showEditProjectModal, setShowEditProjectModal] = useState(false);
+  const [showProjectSettingsModal, setShowProjectSettingsModal] = useState(false);
 
   // const xx = useQuery(api.experiments3.listQueryFluentExtended, {});
   // console.log("XXXXX", xx ? xx.map((x) => x._id) : []);
@@ -65,6 +65,21 @@ export default function MenuBar() {
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>
+
+            {project && (
+              <Menu shadow="md" width={160}>
+                <Menu.Target>
+                  <Text size="sm" style={{ cursor: "pointer" }}>
+                    Edit
+                  </Text>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item onClick={() => setShowProjectSettingsModal(true)}>
+                    Project Settings
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            )}
 
             <Menu shadow="md" width={160}>
               <Menu.Target>
@@ -147,7 +162,7 @@ export default function MenuBar() {
                 size="sm"
                 variant="subtle"
                 color="gray"
-                onClick={() => setShowEditProjectModal(true)}
+                onClick={() => setShowProjectSettingsModal(true)}
               >
                 <IconEdit size={14} />
               </ActionIcon>
@@ -174,10 +189,9 @@ export default function MenuBar() {
         onSelected={(id) => appModel.setCurrentProjectId(id)}
       />
 
-      <EditProjectModal
-        opened={showEditProjectModal}
-        onClose={() => setShowEditProjectModal(false)}
-        projectId={appModel.currentProjectId}
+      <ProjectSettingsModal
+        opened={showProjectSettingsModal}
+        onClose={() => setShowProjectSettingsModal(false)}
       />
     </>
   );

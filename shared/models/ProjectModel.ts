@@ -112,12 +112,19 @@ export class ProjectModel {
     this.doc.name = name;
   }
 
-  updateSettings(settings: { nightMode?: boolean; lightsOnTop?: boolean }) {
+  updateSettings(settings: {
+    nightMode?: boolean;
+    lightsOnTop?: boolean;
+    stringLedSize?: number;
+  }) {
     if (settings.nightMode !== undefined)
       this.settings.nightMode = settings.nightMode;
 
     if (settings.lightsOnTop !== undefined)
       this.settings.lightsOnTop = settings.lightsOnTop;
+
+    if (settings.stringLedSize !== undefined)
+      this.settings.stringLedSize = settings.stringLedSize;
   }
 
   removePlaylist(playlist: PlaylistModel) {
