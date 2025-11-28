@@ -8,6 +8,19 @@ import { Command } from "commander";
 import prompts from "prompts";
 import { App } from "./App";
 
+// Polyfill requestAnimationFrame for HeadlessFixedFrameProvider
+if (!globalThis.requestAnimationFrame) {
+  let lastTime = 0;
+  globalThis.requestAnimationFrame = (callback) => {
+    const currTime = Date.now();
+    const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+    const id = setTimeout(() => callback(currTime + timeToCall), timeToCall);
+    lastTime = currTime + timeToCall;
+    return id as unknown as number;
+  };
+  globalThis.cancelAnimationFrame = (id) => clearTimeout(id);
+}
+
 const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
 
 // CLI setup
@@ -16,9 +29,11 @@ program.option("-p, --project <id>", "Project ID").parse(process.argv);
 
 const options = program.opts();
 let projectId = options.project;
+let projectDoc: Doc<"projects"> | null = null;
+
+const client = new ConvexHttpClient(convexUrl);
 
 if (!projectId) {
-  const client = new ConvexHttpClient(convexUrl);
   const projects = await client.query(api.model.listProjects, {});
 
   if (projects.length === 0) {
@@ -34,11 +49,37 @@ if (!projectId) {
   });
 
   projectId = response.projectId;
+  projectDoc = projects.find((p) => p._id === projectId) ?? null;
+} else {
+  const projects = await client.query(api.model.listProjects, {});
+  projectDoc = projects.find((p) => p._id === projectId) ?? null;
 }
 
-if (!projectId) {
+if (!projectId || !projectDoc) {
   console.log("No project selected.");
   process.exit(0);
+}
+
+// Select Playlist
+const playlists = await client.query(api.model.listPlaylistsForProject, {
+  projectId: projectId as Id<"projects">,
+});
+
+let playlistId: Id<"playlists"> | undefined = undefined;
+
+if (playlists.length > 0) {
+  const response = await prompts({
+    type: "select",
+    name: "playlistId",
+    message: "Select a playlist to play (or None to listen)",
+    choices: [
+      { title: "None (Listen Mode)", value: null },
+      ...playlists.map((p) => ({ title: p.name, value: p._id })),
+    ],
+  });
+  if (response.playlistId) {
+    playlistId = response.playlistId;
+  }
 }
 
 const convex = new ConvexReactClient(convexUrl);
@@ -46,6 +87,6 @@ const convex = new ConvexReactClient(convexUrl);
 // Mount the component so hooks run in Bun
 render(
   <ConvexProvider client={convex}>
-    <App projectId={projectId as Id<"projects">} />
+    <App project={projectDoc} playlistId={playlistId} />
   </ConvexProvider>,
 );

@@ -43,8 +43,8 @@ const fragmentShader = `
     vec2 dUv = fwidth(vUv);
     float pixelDist = distFromEdge / min(dUv.x, dUv.y);
     
-    // Draw 2-pixel border (100% opacity) with dynamic color
-    if (pixelDist < 2.0) {
+    // Draw 1-pixel border (100% opacity) with dynamic color
+    if (pixelDist < 1.0) {
       gl_FragColor = vec4(borderColor, 1.0);
     } else {
       // Convert to HSV for saturation/brightness adjustment
