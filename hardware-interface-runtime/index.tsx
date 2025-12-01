@@ -21,7 +21,7 @@ if (!globalThis.requestAnimationFrame) {
   globalThis.cancelAnimationFrame = (id) => clearTimeout(id);
 }
 
-const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
+const convexUrl = `https://aromatic-cardinal-985.convex.cloud`; // import.meta.env.VITE_CONVEX_URL as string;
 
 // CLI setup
 const program = new Command();
