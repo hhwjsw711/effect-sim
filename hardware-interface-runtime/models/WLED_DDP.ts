@@ -6,6 +6,8 @@ import { iife } from "../../shared/misc";
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // DDP Protocol constants
 // Byte 0 is Flags/Version: high nibble = version (0x4 -> v1), low nibble = flags (bit0 = PUSH)
 const VER1 = 0x40; // version 1 in high nibble
@@ -13,26 +15,75 @@ const FLAG_PUSH = 0x01; // push flag
 const DATA_TYPE = 0x01; // Data type RGB
 const OUTPUT_ID = 0x01; // Default ID for output device
 
-export const createAndConnectWLEDDDP = async ({
+const connectWLEDDDP = async ({
   host,
   port,
+  signal,
 }: {
   host: string;
   port: number;
+  signal?: AbortSignal;
 }) => {
-  console.log(`WLED DDP connecting to ${host}:${port}`);
-  const socket = dgram.createSocket("udp4");
-  const client = new WLEDClient({
-    host,
-    websocket: false,
-  });
-  socket.on("close", () => {
-    console.log(`dgram socket on.close event to ${host}:${port}`);
-  });
-  await client.init();
-  await client.turnOn();
+  let attempt = 0;
+  const maxDelay = 5000;
+  const baseDelay = 500;
 
-  console.log(`WLED DDP connection initialized to ${host}:${port}`);
+  while (true) {
+    if (signal?.aborted) throw new Error("Connection aborted before attempt");
+
+    try {
+      console.log(
+        `WLED DDP connecting to ${host}:${port}${attempt > 0 ? ` (attempt ${attempt + 1})` : ""}`,
+      );
+
+      const socket = dgram.createSocket("udp4");
+      const client = new WLEDClient({
+        host,
+        websocket: false,
+      });
+
+      socket.on("close", () => {
+        console.log(`dgram socket on.close event to ${host}:${port}`);
+      });
+
+      await client.init();
+      await client.turnOn();
+
+      // Check if aborted after successful connection
+      if (signal?.aborted) {
+        console.log(
+          `WLED DDP connection succeeded but was aborted, closing ${host}:${port}`,
+        );
+        socket.close();
+        await client.turnOff();
+        throw new Error("Connection aborted after successful connection");
+      }
+
+      console.log(`WLED DDP connection initialized to ${host}:${port}`);
+      return { socket, client };
+    } catch (error) {
+      if (signal?.aborted) throw new Error("Connection aborted");
+
+      attempt++;
+      const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
+      console.error(
+        `WLED DDP connection failed to ${host}:${port}, retrying in ${delay}ms... error was: ${error}`,
+      );
+      await sleep(delay);
+    }
+  }
+};
+
+export const createAndConnectWLEDDDP = async ({
+  host,
+  port,
+  signal,
+}: {
+  host: string;
+  port: number;
+  signal?: AbortSignal;
+}) => {
+  const { socket, client } = await connectWLEDDDP({ host, port, signal });
 
   let isClosedOrClosing = false;
 
