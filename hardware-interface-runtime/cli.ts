@@ -9,7 +9,7 @@ export const runSetupCLI = async (convexUrl: string) => {
   // CLI setup
   const program = new Command();
   program.option("-p, --project <id>", "Project ID").parse(process.argv);
-  program.option("-pl, --playlist <id>", "Playlist ID").parse(process.argv);
+  program.option("-l, --playlist <id>", "Playlist ID").parse(process.argv);
 
   const options = program.opts();
   const client = new ConvexHttpClient(convexUrl);
