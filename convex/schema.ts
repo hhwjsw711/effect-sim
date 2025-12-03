@@ -114,6 +114,7 @@ export default defineSchema({
           v.literal("first_person"),
         ),
       ),
+      defaultFramerate: v.optional(v.number()),
     }),
   }),
 

@@ -1,5 +1,6 @@
 import { Modal, Stack, NumberInput, TextInput } from "@mantine/core";
 import { useApp } from "../AppContext";
+import { DEFAULT_FRAMERATE } from "./projectConstants";
 
 export default function ProjectSettingsModal({
   opened,
@@ -11,6 +12,7 @@ export default function ProjectSettingsModal({
   const project = useApp().getProject();
 
   const currentStringLedSize = project.settings.stringLedSize ?? 0.1;
+  const currentFramerate = project.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
 
   return (
     <Modal opened={opened} onClose={onClose} title="Project Settings" size="sm">
@@ -43,6 +45,23 @@ export default function ProjectSettingsModal({
           max={1.0}
           step={0.1}
           decimalScale={2}
+        />
+        <NumberInput
+          label="Default Framerate"
+          description="Frames per second for effects playback"
+          value={currentFramerate}
+          onChange={(value) => {
+            if (value !== null && value !== undefined) {
+              const numValue =
+                typeof value === "number" ? value : Number(value);
+              if (!isNaN(numValue) && numValue > 0)
+                project.updateSettings({ defaultFramerate: numValue });
+            }
+          }}
+          min={1}
+          max={120}
+          step={1}
+          suffix=" FPS"
         />
       </Stack>
     </Modal>

@@ -6,13 +6,12 @@ import "@mantine/notifications/styles.css";
 import "flexlayout-react/style/dark.css";
 import "./index.css";
 import App from "./App.tsx";
-import { LedDataStoreProvider } from "./data/LedDataStoreProvider.tsx";
 import { RouteProvider } from "./router.ts";
 import { ConfirmationProvider } from "./common/confirmation/ConfirmationProvider";
 import { MantineProvider } from "@mantine/core";
 import { AppProvider } from "./common/AppContext.tsx";
 import { FlexLayoutProvider } from "./common/FlexLayoutProvider";
-import { FixedFrameProvider } from "./common/FixedFrameProvider";
+import { ProjectFixedFrameProvider } from "./common/ProjectFixedFrameProvider";
 import { AppSyncer } from "./common/models/AppSyncer.tsx";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -26,13 +25,13 @@ createRoot(rootElement).render(
       <RouteProvider>
         <MantineProvider defaultColorScheme="dark">
           <ConfirmationProvider>
-            <AppProvider>
-              <FlexLayoutProvider storageKey="flexlayout:model:v1">
-                <FixedFrameProvider>
+            <AppProvider flexLayoutStorageKey="flexlayout:model:v1">
+              <FlexLayoutProvider>
+                <ProjectFixedFrameProvider>
                   <AppSyncer>
                     <App />
                   </AppSyncer>
-                </FixedFrameProvider>
+                </ProjectFixedFrameProvider>
               </FlexLayoutProvider>
             </AppProvider>
           </ConfirmationProvider>

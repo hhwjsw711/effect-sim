@@ -13,6 +13,7 @@ import type { TrackModel } from "../../../shared/models/sequencer/TrackModel";
 import type { AllTrackEventModels } from "../../../shared/models/sequencer";
 import type { PlaylistModel } from "../../../shared/models/PlaylistModel";
 import { HardwareInterfaceRuntimeModel } from "./HardwareInterfaceRuntimeModel";
+import { FlexLayoutModel } from "./FlexLayoutModel";
 import { z } from "zod";
 import { PersistableModel } from "../persistence/ModelPersister";
 
@@ -58,8 +59,10 @@ export class AppModel implements PersistableModel<AppPersistableData> {
   gardenModel: THREE.Object3D | null = null;
   projects: ProjectModel[] = [];
   hardwareInterfaceRuntime = new HardwareInterfaceRuntimeModel();
+  flexLayout: FlexLayoutModel;
 
-  constructor() {
+  constructor(flexLayoutStorageKey: string = "flexlayout:model:v1") {
+    this.flexLayout = new FlexLayoutModel(flexLayoutStorageKey);
     makeAutoObservable(this, {
       gardenModel: observable.ref,
     });
