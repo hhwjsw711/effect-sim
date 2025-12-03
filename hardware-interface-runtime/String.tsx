@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { HWStringModel } from "./models/HWStringModel";
-import { reaction } from "mobx";
 import { createAndConnectWLEDDDP, WLEDDDPConnection } from "./models/WLED_DDP";
+import { observer } from "mobx-react-lite";
 
-export const String = ({ model }: { model: HWStringModel }) => {
+export const String = observer(({ model }: { model: HWStringModel }) => {
   const [connection, setConnection] = useState<WLEDDDPConnection | null>(null);
 
   useEffect(() => {
@@ -36,34 +36,28 @@ export const String = ({ model }: { model: HWStringModel }) => {
 
   useEffect(() => {
     if (!connection) return;
-
-    const unlistenToData = model.onData.add((rgb) => {
-      console.log(
-        `Sending '${rgb.length}' bytes data to '${model.string.name}'`,
-      );
+    return model.onData.add((rgb) => {
+      // console.log(
+      //   `Sending '${rgb.length}' bytes data to '${model.string.name}'`,
+      // );
       connection.send(rgb).catch((e) => {
         console.error(
           `Error sending packet of ${rgb.length} bytes to '${model.string.name}': ${e}`,
         );
       });
     });
+  }, [connection, model.onData]);
 
-    const unlistenToBrightness = reaction(
-      () => model.string.brightness,
-      (brightness) => {
-        connection.setBrightness(brightness).catch((e) => {
-          console.error(
-            `Error setting brightness to ${brightness} for '${model.string.name}': ${e}`,
-          );
-        });
-      },
-    );
-
-    return () => {
-      unlistenToData();
-      unlistenToBrightness();
-    };
-  }, [connection]);
+  useEffect(() => {
+    if (!connection) return;
+    const brightness = model.string.brightness;
+    const name = model.string.name;
+    connection.setBrightness(brightness).catch((e) => {
+      console.error(
+        `Error setting brightness to ${brightness} for '${name}': ${e}`,
+      );
+    });
+  }, [model.string.brightness, connection]);
 
   return null;
-};
+});

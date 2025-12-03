@@ -4,10 +4,11 @@ import type { WebSocket, RawData } from "ws";
 import { WebSocketServer } from "ws";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 import { Id } from "../convex/_generated/dataModel";
+import { observer } from "mobx-react-lite";
 
 const CONTROL_PORT = Number(process.env.BUN_WS_PORT ?? 8787);
 
-export const ClientDataSocket = ({ app }: { app: HWIRAppModel }) => {
+export const ClientDataSocket = observer(({ app }: { app: HWIRAppModel }) => {
   useEffect(() => {
     const wssControl = new WebSocketServer({ port: CONTROL_PORT });
 
@@ -30,7 +31,7 @@ export const ClientDataSocket = ({ app }: { app: HWIRAppModel }) => {
         if (u8.byteLength < end) return;
         const id = new TextDecoder().decode(u8.subarray(start, end));
         const rgbBytes = u8.subarray(end);
-        
+
         const string = app.stringsMap.get(id as Id<"nodes">);
         if (!string) return;
         string.onData.dispatch(rgbBytes);
@@ -45,4 +46,4 @@ export const ClientDataSocket = ({ app }: { app: HWIRAppModel }) => {
   }, []);
 
   return null;
-};
+});

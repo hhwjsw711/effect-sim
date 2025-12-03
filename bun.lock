@@ -26,6 +26,7 @@
         "fluent-convex": "0.9.2",
         "idb-keyval": "^6.2.2",
         "mobx": "^6.15.0",
+        "mobx-react-lite": "^4.1.1",
         "mobx-react-observer": "^1.1.0",
         "postprocessing": "^6.38.0",
         "prompts": "^2.4.2",

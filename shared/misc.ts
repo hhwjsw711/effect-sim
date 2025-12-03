@@ -52,3 +52,6 @@ export function produceLiteral<Key extends string>(
 
   return literal as { [key in Key]: key };
 }
+
+export const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(value, max));

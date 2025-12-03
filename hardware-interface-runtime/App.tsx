@@ -7,6 +7,8 @@ import { HeadlessLedDataDispatcher } from "./HeadlessLedDataDispatcher";
 import { FixedFrameProvider } from "../src/common/FixedFrameProvider";
 import { useProjectModel } from "./hooks";
 import { HWIRAppModel } from "./models/HWIRAppModel";
+import { useApp } from "../src/common/AppContext";
+import { DEFAULT_FRAMERATE } from "../src/common/projects/projectConstants";
 
 export const App = observer(({ app }: { app: HWIRAppModel }) => {
   useProjectModel(app);
@@ -14,9 +16,14 @@ export const App = observer(({ app }: { app: HWIRAppModel }) => {
   if (!app.dataStore) return null;
   if (!app.project) return null;
 
+  const project = app.project;
+
+  const framerate = project?.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
+  const frameMs = 1000 / framerate;
+
   return (
     <LedDataStoreContext.Provider value={app.dataStore}>
-      <FixedFrameProvider>
+      <FixedFrameProvider frameMs={frameMs}>
         {app.strings.map((string) => (
           <String key={string.string._id} model={string} />
         ))}

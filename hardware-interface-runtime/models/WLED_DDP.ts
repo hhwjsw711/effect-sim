@@ -106,6 +106,10 @@ export const createAndConnectWLEDDDP = async ({
           return Buffer.concat([header, data]);
         });
 
+        // console.log(
+        //   `ccc Sending packet of ${packet.length} bytes to ${host}:${port}`,
+        // );
+
         socket.send(
           packet,
           0,
@@ -136,10 +140,10 @@ export const createAndConnectWLEDDDP = async ({
     async close(): Promise<void> {
       if (isClosedOrClosing) return;
       isClosedOrClosing = true;
-      console.log(`Closing WLEDDdp connection to ${host}:${port}`);
+      console.log(`Closing WLED DDP connection to ${host}:${port}`);
       socket.close();
       await client.turnOff();
-      console.log(`Closed WLEDDdp connection to ${host}:${port}`);
+      console.log(`Closed WLED DDP connection to ${host}:${port}`);
     },
   };
 };

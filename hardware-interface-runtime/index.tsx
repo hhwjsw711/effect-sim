@@ -8,7 +8,7 @@ import { HWIRAppModel } from "./models/HWIRAppModel";
 
 polyfillRAF();
 
-const convexUrl = import.meta.env.VITE_CONVEX_URL as string; //  `https://aromatic-cardinal-985.convex.cloud`
+const convexUrl = `https://aromatic-cardinal-985.convex.cloud`;
 
 const { projectId, playlistId } = await runSetupCLI(convexUrl);
 const convex = new ConvexReactClient(convexUrl);
