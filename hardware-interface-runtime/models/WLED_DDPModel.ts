@@ -31,7 +31,7 @@ type ConnectionStatus =
  * Client for controlling WLED devices using the DDP (Distributed Display Protocol)
  * Provides methods for sending color data and controlling LED settings
  */
-export class WLED_DDPModel {
+export class WLEDDDPConnectionModel {
   socket: dgram.Socket | null = null;
   client: WLEDClient | null = null;
   status: ConnectionStatus = "disconnected";
