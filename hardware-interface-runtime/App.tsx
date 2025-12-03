@@ -7,7 +7,6 @@ import { HeadlessLedDataDispatcher } from "./HeadlessLedDataDispatcher";
 import { FixedFrameProvider } from "../src/common/FixedFrameProvider";
 import { useProjectModel } from "./hooks";
 import { HWIRAppModel } from "./models/HWIRAppModel";
-import { useApp } from "../src/common/AppContext";
 import { DEFAULT_FRAMERATE } from "../src/common/projects/projectConstants";
 
 export const App = observer(({ app }: { app: HWIRAppModel }) => {
