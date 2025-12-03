@@ -5,17 +5,8 @@ import { AppModel, type SelectedEntity } from "./models/AppModel";
 
 const AppContext = createContext<AppModel | null>(null);
 
-export function AppProvider({
-  children,
-  flexLayoutStorageKey = "flexlayout:model:v1",
-}: {
-  children: ReactNode;
-  flexLayoutStorageKey?: string;
-}) {
-  const appModel = useMemo(
-    () => new AppModel(flexLayoutStorageKey),
-    [flexLayoutStorageKey],
-  );
+export function AppProvider({ children }: { children: ReactNode }) {
+  const appModel = useMemo(() => new AppModel(), []);
   return <AppContext.Provider value={appModel}>{children}</AppContext.Provider>;
 }
 

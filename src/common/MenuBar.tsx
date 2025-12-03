@@ -4,33 +4,23 @@ import {
   IconExternalLink,
   IconChevronRight,
 } from "@tabler/icons-react";
-import { useFlexLayout } from "./FlexLayoutProvider";
 import { notifications } from "@mantine/notifications";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import { iife } from "../../shared/misc";
 import { getConvexDeploymentName } from "./utils/convex";
 import { useApp } from "./AppContext";
 import { useState, useEffect } from "react";
 import NewProjectModal from "./projects/NewProjectModal";
 import OpenProjectModal from "./projects/OpenProjectModal";
-import WelcomeModal from "./projects/WelcomeModal";
 import ProjectSettingsModal from "./projects/ProjectSettingsModal";
 import { HardwareInterfaceStatus } from "./hardware-interface/HardwareInterfaceStatus";
 
 export default function MenuBar() {
-  const { showInspector, showSequencer, showPlaylists, resetLayout, model } =
-    useFlexLayout();
-  const appModel = useApp();
-  const project = appModel.project;
+  const app = useApp();
 
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [showOpenProjectModal, setShowOpenProjectModal] = useState(false);
   const [showProjectSettingsModal, setShowProjectSettingsModal] =
     useState(false);
-
-  // const xx = useQuery(api.experiments3.listQueryFluentExtended, {});
-  // console.log("XXXXX", xx ? xx.map((x) => x._id) : []);
 
   return (
     <>
@@ -71,7 +61,7 @@ export default function MenuBar() {
               </Menu.Dropdown>
             </Menu>
 
-            {project && (
+            {app.project && (
               <Menu shadow="md" width={160}>
                 <Menu.Target>
                   <Text size="sm" style={{ cursor: "pointer" }}>
@@ -93,10 +83,12 @@ export default function MenuBar() {
                 </Text>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item onClick={resetLayout}>Reset Layout</Menu.Item>
+                <Menu.Item onClick={() => app.flex.resetLayout()}>
+                  Reset Layout
+                </Menu.Item>
                 <Menu.Item
                   onClick={() => {
-                    const json = model.toJson();
+                    const json = app.flex.model.toJson();
                     navigator.clipboard.writeText(JSON.stringify(json));
                     notifications.show({
                       title: "Layout copied to clipboard",
@@ -108,9 +100,15 @@ export default function MenuBar() {
                   Copy Layout
                 </Menu.Item>
                 <Divider my="sm" />
-                <Menu.Item onClick={showInspector}>Show Inspector</Menu.Item>
-                <Menu.Item onClick={showSequencer}>Show Sequencer</Menu.Item>
-                <Menu.Item onClick={showPlaylists}>Show Playlists</Menu.Item>
+                <Menu.Item onClick={() => app.flex.showInspector()}>
+                  Show Inspector
+                </Menu.Item>
+                <Menu.Item onClick={() => app.flex.showSequencer()}>
+                  Show Sequencer
+                </Menu.Item>
+                <Menu.Item onClick={() => app.flex.showPlaylists()}>
+                  Show Playlists
+                </Menu.Item>
                 <Divider my="sm" />
                 <Menu.Item
                   leftSection={<IconExternalLink size={16} />}
@@ -129,23 +127,23 @@ export default function MenuBar() {
                 <Divider my="sm" />
                 <Menu.Item
                   onClick={() => {
-                    if (project)
-                      project.updateSettings({
-                        nightMode: !project.settings.nightMode,
+                    if (app.project)
+                      app.project.updateSettings({
+                        nightMode: !app.project.settings.nightMode,
                       });
                   }}
                 >
-                  {project?.settings.nightMode ? "✓ " : ""}Night Mode
+                  {app.project?.settings.nightMode ? "✓ " : ""}Night Mode
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => {
-                    if (project)
-                      project.updateSettings({
-                        lightsOnTop: !project.settings.lightsOnTop,
+                    if (app.project)
+                      app.project.updateSettings({
+                        lightsOnTop: !app.project.settings.lightsOnTop,
                       });
                   }}
                 >
-                  {project?.settings.lightsOnTop ? "✓ " : ""}Lights On Top
+                  {app.project?.settings.lightsOnTop ? "✓ " : ""}Lights On Top
                 </Menu.Item>
                 <Divider my="sm" />
                 <Menu trigger="hover" position="right-start">
@@ -157,29 +155,29 @@ export default function MenuBar() {
                   <Menu.Dropdown>
                     <Menu.Item
                       onClick={() =>
-                        project?.updateSettings({ cameraControl: "orbit" })
+                        app.project?.updateSettings({ cameraControl: "orbit" })
                       }
                     >
-                      {(project?.settings.cameraControl === "orbit" ||
-                        !project?.settings.cameraControl) &&
+                      {(app.project?.settings.cameraControl === "orbit" ||
+                        !app.project?.settings.cameraControl) &&
                         "✓ "}
                       Orbit
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
-                        project?.updateSettings({ cameraControl: "fly" })
+                        app.project?.updateSettings({ cameraControl: "fly" })
                       }
                     >
-                      {project?.settings.cameraControl === "fly" && "✓ "}Fly
+                      {app.project?.settings.cameraControl === "fly" && "✓ "}Fly
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
-                        project?.updateSettings({
+                        app.project?.updateSettings({
                           cameraControl: "first_person",
                         })
                       }
                     >
-                      {project?.settings.cameraControl === "first_person" &&
+                      {app.project?.settings.cameraControl === "first_person" &&
                         "✓ "}
                       First Person
                     </Menu.Item>
@@ -198,9 +196,9 @@ export default function MenuBar() {
             }}
           >
             <Text fw={500} size="sm" c="dimmed">
-              {project ? project.name : "No project selected"}
+              {app.project ? app.project.name : "No project selected"}
             </Text>
-            {project && appModel.currentProjectId ? (
+            {app.project && app.currentProjectId ? (
               <ActionIcon
                 size="sm"
                 variant="subtle"
@@ -221,13 +219,13 @@ export default function MenuBar() {
       <NewProjectModal
         opened={showNewProjectModal}
         onClose={() => setShowNewProjectModal(false)}
-        onCreated={(id) => appModel.setCurrentProjectId(id)}
+        onCreated={(id) => app.setCurrentProjectId(id)}
       />
 
       <OpenProjectModal
         opened={showOpenProjectModal}
         onClose={() => setShowOpenProjectModal(false)}
-        onSelected={(id) => appModel.setCurrentProjectId(id)}
+        onSelected={(id) => app.setCurrentProjectId(id)}
       />
 
       <ProjectSettingsModal

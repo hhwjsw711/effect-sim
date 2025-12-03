@@ -1,12 +1,10 @@
 import { ActionIcon, Menu } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useApp } from "../common/AppContext";
-import { useFlexLayout } from "../common/FlexLayoutProvider";
 
 export function NodesTreeAddMenu() {
-  const appModel = useApp();
-  const project = appModel.getProject();
-  const { showInspector } = useFlexLayout();
+  const app = useApp();
+  const project = app.getProject();
 
   return (
     <Menu shadow="md" width={180} withinPortal>
@@ -22,8 +20,8 @@ export function NodesTreeAddMenu() {
               ledCount: 196,
               port: 4048,
             });
-            appModel.setSelectedEntity({ kind: "node", node });
-            showInspector();
+            app.setSelectedEntity({ kind: "node", node });
+            app.flex.showInspector();
           }}
         >
           Add String
@@ -31,12 +29,12 @@ export function NodesTreeAddMenu() {
         <Menu.Item
           onClick={() => {
             const node = project.createVirtualStringNode();
-            appModel.setSelectedEntity({
+            app.setSelectedEntity({
               kind: "virtual_string",
               node,
               selectedSegmentIndex: null,
             });
-            showInspector();
+            app.flex.showInspector();
           }}
         >
           Add Virtual String
@@ -53,8 +51,8 @@ export function NodesTreeAddMenu() {
         <Menu.Item
           onClick={() => {
             const node = project.createSwitchNode();
-            appModel.setSelectedEntity({ kind: "node", node });
-            showInspector();
+            app.setSelectedEntity({ kind: "node", node });
+            app.flex.showInspector();
           }}
         >
           Add Switch

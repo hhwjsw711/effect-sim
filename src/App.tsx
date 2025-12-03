@@ -3,7 +3,6 @@ import { LedDataDispatcher } from "./data/LedDataDispatcher";
 import { SimulatorProvider } from "./simulator/SimulatorProvider.tsx";
 import type { TabNode } from "flexlayout-react";
 import { Layout } from "flexlayout-react";
-import { useFlexLayout } from "./common/FlexLayoutProvider";
 import MenuBar from "./common/MenuBar";
 import InspectorPanel from "./inspector/InspectorPanel.tsx";
 import { SequencerProvider } from "./sequencer/SequencerProvider";
@@ -16,10 +15,9 @@ import { HardwareInterfaceRuntimeAutoconnector } from "./common/hardware-interfa
 import { AppModelPersister } from "./common/models/AppModelPersister.tsx";
 
 export default function App() {
-  const { model, onModelChange } = useFlexLayout();
-  const project = useApp().project;
+  const app = useApp();
 
-  if (!project)
+  if (!app.project)
     return (
       <>
         <WelcomeModal />
@@ -41,8 +39,8 @@ export default function App() {
           <MenuBar />
           <div style={{ flex: 1, minHeight: 0, position: "relative" }}>
             <Layout
-              model={model}
-              onModelChange={onModelChange}
+              model={app.flex.model}
+              onModelChange={(model) => app.flex.setModel(model)}
               factory={(node: TabNode) => {
                 const component = node.getComponent();
                 if (component === "simulator") return <SimulatorProvider />;

@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, observable } from "mobx";
 import type { IJsonModel } from "flexlayout-react";
 import { Model, Actions, DockLocation } from "flexlayout-react";
 import { defaultLayoutJson } from "../tabs";
@@ -10,36 +10,24 @@ export const PLAYLISTS_TAB_ID = "tab-playlists";
 
 export class FlexLayoutModel {
   model: Model;
-  private storageKey: string;
+  modelJson: IJsonModel | null = null;;
 
-  constructor(storageKey: string) {
-    this.storageKey = storageKey;
-    this.model = this.loadModel();
+  constructor() {
+    this.model = Model.fromJson(defaultLayoutJson);
     makeAutoObservable(this, {
-      model: false, // Model is not observable, we'll update it via setModel
+      model: observable.ref,
     });
-  }
-
-  private loadModel(): Model {
-    try {
-      const raw = localStorage.getItem(this.storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw) as IJsonModel;
-        return Model.fromJson(parsed);
-      }
-    } catch (err) {
-      console.warn("Failed to load saved layout, using default", err);
-    }
-    return Model.fromJson(defaultLayoutJson);
   }
 
   setModel(nextModel: Model) {
     this.model = nextModel;
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(nextModel.toJson()));
-    } catch (err) {
-      console.warn("Failed to persist layout", err);
-    }
+    const json = this.model.toJson();
+    console.log("FlexLayoutModel changed", json);
+    this.modelJson = json;
+  }
+
+  setLayoutFromJson(layoutJson: IJsonModel) {
+    this.setModel(Model.fromJson(layoutJson));
   }
 
   resetLayout() {

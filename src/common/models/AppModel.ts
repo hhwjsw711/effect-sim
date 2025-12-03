@@ -45,6 +45,7 @@ export const AppPersistableDataSchema = z.object({
       autoconnect: z.boolean().optional(),
     })
     .optional(),
+  flexLayout: z.any().optional(),
 });
 
 export type AppPersistableData = z.infer<typeof AppPersistableDataSchema>;
@@ -59,10 +60,10 @@ export class AppModel implements PersistableModel<AppPersistableData> {
   gardenModel: THREE.Object3D | null = null;
   projects: ProjectModel[] = [];
   hardwareInterfaceRuntime = new HardwareInterfaceRuntimeModel();
-  flexLayout: FlexLayoutModel;
+  flex: FlexLayoutModel;
 
-  constructor(flexLayoutStorageKey: string = "flexlayout:model:v1") {
-    this.flexLayout = new FlexLayoutModel(flexLayoutStorageKey);
+  constructor() {
+    this.flex = new FlexLayoutModel();
     makeAutoObservable(this, {
       gardenModel: observable.ref,
     });
@@ -215,6 +216,7 @@ export class AppModel implements PersistableModel<AppPersistableData> {
       hardwareInterfaceRuntime: {
         autoconnect: this.hardwareInterfaceRuntime.autoconnect,
       },
+      flexLayout: this.flex.modelJson,
     };
   }
 
@@ -226,5 +228,6 @@ export class AppModel implements PersistableModel<AppPersistableData> {
       this.hardwareInterfaceRuntime.setAutoconnect(
         data.hardwareInterfaceRuntime.autoconnect,
       );
+    if (data.flexLayout) this.flex.setLayoutFromJson(data.flexLayout);
   }
 }

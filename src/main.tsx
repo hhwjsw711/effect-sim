@@ -10,7 +10,6 @@ import { RouteProvider } from "./router.ts";
 import { ConfirmationProvider } from "./common/confirmation/ConfirmationProvider";
 import { MantineProvider } from "@mantine/core";
 import { AppProvider } from "./common/AppContext.tsx";
-import { FlexLayoutProvider } from "./common/FlexLayoutProvider";
 import { ProjectFixedFrameProvider } from "./common/ProjectFixedFrameProvider";
 import { AppSyncer } from "./common/models/AppSyncer.tsx";
 
@@ -25,14 +24,12 @@ createRoot(rootElement).render(
       <RouteProvider>
         <MantineProvider defaultColorScheme="dark">
           <ConfirmationProvider>
-            <AppProvider flexLayoutStorageKey="flexlayout:model:v1">
-              <FlexLayoutProvider>
-                <ProjectFixedFrameProvider>
-                  <AppSyncer>
-                    <App />
-                  </AppSyncer>
-                </ProjectFixedFrameProvider>
-              </FlexLayoutProvider>
+            <AppProvider>
+              <ProjectFixedFrameProvider>
+                <AppSyncer>
+                  <App />
+                </AppSyncer>
+              </ProjectFixedFrameProvider>
             </AppProvider>
           </ConfirmationProvider>
         </MantineProvider>
