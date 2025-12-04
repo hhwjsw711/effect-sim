@@ -25,7 +25,7 @@ export const App = observer(({ app }: { app: HWIRAppModel }) => {
 
   return (
     <LedDataStoreContext.Provider value={app.dataStore}>
-      {shouldAutoUpdate ? <AutoUpdater /> : null}
+      {shouldAutoUpdate ? <AutoUpdater app={app} /> : null}
       <FixedFrameProvider frameMs={frameMs}>
         {app.strings.map((string) => (
           <String key={string.string._id} model={string} />

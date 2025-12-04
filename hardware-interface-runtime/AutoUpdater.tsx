@@ -2,19 +2,25 @@ import { useEffect } from "react";
 import { spawn } from "child_process";
 import { GitUpdateChecker } from "./utils/GitUpdateChecker";
 import { logger } from "./utils/logger";
-
-interface AutoUpdaterProps {
-  checkIntervalMs?: number;
-}
+import { HWIRAppModel } from "./models/HWIRAppModel";
 
 /**
  * Component that periodically checks for git updates and automatically restarts
  * the application when updates are available.
  */
 export const AutoUpdater = ({
+  app,
   checkIntervalMs = 1 * 60 * 1000, // 1 minute default
-}: AutoUpdaterProps) => {
+}: {
+  app: HWIRAppModel;
+  checkIntervalMs?: number;
+}) => {
+  const projectId = app.project?._id;
+  const playlistId = app.playlist?._id;
+
   useEffect(() => {
+    if (!projectId) return;
+
     logger.info(
       `Auto-updater enabled. Checking for updates every ${checkIntervalMs / 1000}s`,
     );
@@ -74,7 +80,16 @@ export const AutoUpdater = ({
 
       const updateScript = "hardware-interface-runtime/updateAndRestart.ts";
 
-      const child = spawn("bun", [updateScript], {
+      // Pass current settings to update script so it can restart with same config
+      const args = [
+        updateScript,
+        "--project",
+        projectId,
+        "--playlist",
+        playlistId ?? "null",
+      ];
+
+      const child = spawn("bun", args, {
         detached: true,
         stdio: ["ignore", "inherit", "inherit"],
         shell: true,
@@ -100,7 +115,7 @@ export const AutoUpdater = ({
       clearTimeout(initialTimer);
       clearInterval(interval);
     };
-  }, [checkIntervalMs]);
+  }, [checkIntervalMs, projectId, playlistId]);
 
   return null;
 };

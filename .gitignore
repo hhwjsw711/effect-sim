@@ -25,6 +25,3 @@ dist-ssr
 
 # Ignored for the template, you probably want to remove it:
 package-lock.json
-
-# HWIR local config
-.hwir-config.json

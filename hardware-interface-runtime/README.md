@@ -8,18 +8,15 @@ This part interfaces with the hardware and can optionally play playlists directl
 bun run hwir
 ```
 
-The CLI will prompt you to select a project and playlist on first run, then save those settings to `.hwir-config.json` for future runs.
+The CLI will prompt you to select a project and playlist each time you start.
 
 ### CLI Options
 
 ```bash
-# Use saved settings (default behavior after first run)
+# Normal startup (always prompts)
 bun run hwir
 
-# Reset saved settings and choose again
-bun run hwir --reset
-
-# Specify project/playlist directly
+# Specify project/playlist directly (skips prompts)
 bun run hwir -p <projectId> -l <playlistId>
 ```
 
@@ -41,4 +38,5 @@ When enabled:
 
 - Checks git for updates every 1 minute
 - Automatically pulls, installs deps, and restarts
+- Preserves your project/playlist selection across restarts
 - Only updates when working directory is clean (no uncommitted changes)
