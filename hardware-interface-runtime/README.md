@@ -2,30 +2,6 @@
 
 This part interfaces with the hardware and can optionally play playlists directly without driving the UI.
 
-## Features
-
-- **Headless Playlist Playback**: Run LED sequences without the UI
-- **Hardware Control**: Direct interface with WLED and other LED hardware
-- **Auto-Updates**: Automatically checks for and applies updates from git every 5 minutes
-
-## Auto-Update System
-
-The HWIR includes an automatic update system that keeps itself up-to-date:
-
-- Periodically checks git for updates (default: every 5 minutes)
-- Automatically pulls updates, installs dependencies, and restarts
-- Safe: only updates when working directory is clean
-- Robust error handling with detailed logging
-
-See [AUTO_UPDATE.md](./AUTO_UPDATE.md) for complete documentation.
-
-### Disable Auto-Updates
-
-```bash
-export HWIR_AUTO_UPDATE=false
-bun run hwir
-```
-
 ## Running
 
 ```bash
@@ -33,3 +9,23 @@ bun run hwir
 ```
 
 The CLI will prompt you to select a project and playlist on first run.
+
+## Auto-Update System
+
+Enable auto-updates to keep HWIR up-to-date automatically:
+
+```bash
+# Enable auto-updates
+export HWIR_AUTO_UPDATE=true
+bun run hwir
+
+# Or on Windows PowerShell
+$env:HWIR_AUTO_UPDATE="true"
+bun run hwir
+```
+
+When enabled:
+
+- Checks git for updates every 1 minute
+- Automatically pulls, installs deps, and restarts
+- Only updates when working directory is clean (no uncommitted changes)
