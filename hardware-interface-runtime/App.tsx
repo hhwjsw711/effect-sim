@@ -10,7 +10,7 @@ import { HWIRAppModel } from "./models/HWIRAppModel";
 import { DEFAULT_FRAMERATE } from "../src/common/projects/projectConstants";
 import { AutoUpdater } from "./AutoUpdater";
 
-const shouldAutoUpdate = process.env.HWIR_AUTO_UPDATE !== "false";
+const shouldAutoUpdate = process.env.HWIR_AUTO_UPDATE === "true";
 
 export const App = observer(({ app }: { app: HWIRAppModel }) => {
   useProjectModel(app);

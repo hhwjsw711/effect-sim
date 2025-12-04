@@ -2,6 +2,10 @@
 
 This project serves as both the controller and documentation for my Xmas Lights Display 2025.
 
-## Todo: 
+## Hardware Auto Update
 
-+ Different camera controls
+HWIR_AUTO_UPDATE
+
+## Todo:
+
+- Different camera controls
