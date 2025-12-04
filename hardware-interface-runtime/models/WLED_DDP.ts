@@ -121,7 +121,7 @@ export const createAndConnectWLEDDDP = async ({
               const dataSize = packet.length - 10; // Subtract DDP header size
               reject(
                 new Error(
-                  `Error sending packet of ${dataSize} bytes to ${host}:${port}`,
+                  `Error sending packet of ${dataSize} bytes to ${host}:${port}, err: ${error}`,
                 ),
               );
               return;
