@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useApp } from "../../common/AppContext";
 import { observer } from "mobx-react-lite";
 
@@ -31,14 +31,76 @@ export const StringSegmentRangeInstantIndicator = observer(() => {
   const start = segment?.fromIndex;
   const end = segment?.toIndex;
 
+  const wsRef = useRef<WebSocket | null>(null);
+  const stateRef = useRef({ ledCount, start, end });
+
+  // Update state ref whenever these change so the socket callbacks can access the latest values
   useEffect(() => {
-    if (
-      !ipAddress ||
-      ledCount === undefined ||
-      start === undefined ||
-      end === undefined
-    )
+    stateRef.current = { ledCount, start, end };
+  }, [ledCount, start, end]);
+
+  // Manage WebSocket connection
+  useEffect(() => {
+    console.log("ipAddress", ipAddress);
+
+    if (!ipAddress) return;
+
+    console.log("Connecting to WebSocket", ipAddress);
+
+    const ws = new WebSocket(`ws://${ipAddress}/ws`);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      const { ledCount, start, end } = stateRef.current;
+      if (ledCount === undefined || start === undefined || end === undefined)
+        return;
+
+      console.log(
+        "WS Connected, setting segment indicator color",
+        ipAddress,
+        ledCount,
+        start,
+        end,
+      );
+
+      ws.send(
+        JSON.stringify({
+          seg: {
+            i: [0, ledCount, [0, 0, 0], start, end, [255, 255, 0]],
+          },
+        }),
+      );
+    };
+
+    ws.onerror = (e) => {
+      console.error("WebSocket error", e);
+    };
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        // Reset to white before closing
+        const { ledCount } = stateRef.current;
+        if (ledCount !== undefined)
+          ws.send(
+            JSON.stringify({
+              seg: {
+                i: [0, ledCount, [255, 255, 255]],
+              },
+            }),
+          );
+
+        ws.close();
+      } else ws.close();
+    };
+  }, [ipAddress]);
+
+  // Send updates when range changes
+  useEffect(() => {
+    const ws = wsRef.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (ledCount === undefined || start === undefined || end === undefined)
       return;
+    console.log("ws update...", ws?.readyState);
 
     console.log(
       "Setting segment indicator color",
@@ -48,30 +110,14 @@ export const StringSegmentRangeInstantIndicator = observer(() => {
       end,
     );
 
-    // Set LEDs: range yellow, others black
-    fetch(`http://${ipAddress}/json/state`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    ws.send(
+      JSON.stringify({
         seg: {
           i: [0, ledCount, [0, 0, 0], start, end, [255, 255, 0]],
         },
       }),
-    }).catch((e) => console.error("Failed to set segment indicator color", e));
-
-    return () => {
-      // Cleanup: Set all to white
-      fetch(`http://${ipAddress}/json/state`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          seg: {
-            i: [0, ledCount, [255, 255, 255]],
-          },
-        }),
-      }).catch((e) => console.error("Failed to reset colors", e));
-    };
-  }, [ipAddress, ledCount, start, end]);
+    );
+  }, [ledCount, start, end]);
 
   return null;
 });
