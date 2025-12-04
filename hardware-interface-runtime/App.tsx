@@ -8,6 +8,9 @@ import { FixedFrameProvider } from "../src/common/FixedFrameProvider";
 import { useProjectModel } from "./hooks";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 import { DEFAULT_FRAMERATE } from "../src/common/projects/projectConstants";
+import { AutoUpdater } from "./AutoUpdater";
+
+const shouldAutoUpdate = process.env.HWIR_AUTO_UPDATE !== "false";
 
 export const App = observer(({ app }: { app: HWIRAppModel }) => {
   useProjectModel(app);
@@ -22,6 +25,7 @@ export const App = observer(({ app }: { app: HWIRAppModel }) => {
 
   return (
     <LedDataStoreContext.Provider value={app.dataStore}>
+      {shouldAutoUpdate ? <AutoUpdater /> : null}
       <FixedFrameProvider frameMs={frameMs}>
         {app.strings.map((string) => (
           <String key={string.string._id} model={string} />
