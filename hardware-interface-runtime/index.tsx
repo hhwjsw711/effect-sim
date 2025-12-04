@@ -5,8 +5,9 @@ import { polyfillRAF } from "./polyfill";
 import { runSetupCLI } from "./cli";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 import { ensure } from "../shared/ensure";
+import { logger } from "./utils/logger";
 
-console.log("Hardware Interface Runtime Starting...");
+logger.info("Hardware Interface Runtime Starting...");
 
 polyfillRAF();
 

@@ -1,7 +1,7 @@
 import dgram from "dgram";
-import { runInAction } from "mobx";
 import { WLEDClient } from "wled-client";
 import { iife } from "../../shared/misc";
+import { logger } from "../utils/logger";
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(value, max));
@@ -32,7 +32,7 @@ const connectWLEDDDP = async ({
     if (signal?.aborted) throw new Error("Connection aborted before attempt");
 
     try {
-      console.log(
+      logger.info(
         `WLED DDP connecting to ${host}:${port}${attempt > 0 ? ` (attempt ${attempt + 1})` : ""}`,
       );
 
@@ -43,7 +43,7 @@ const connectWLEDDDP = async ({
       });
 
       socket.on("close", () => {
-        console.log(`dgram socket on.close event to ${host}:${port}`);
+        logger.info(`dgram socket on.close event to ${host}:${port}`);
       });
 
       await client.init();
@@ -51,7 +51,7 @@ const connectWLEDDDP = async ({
 
       // Check if aborted after successful connection
       if (signal?.aborted) {
-        console.log(
+        logger.info(
           `WLED DDP connection succeeded but was aborted, closing ${host}:${port}`,
         );
         socket.close();
@@ -59,14 +59,14 @@ const connectWLEDDDP = async ({
         throw new Error("Connection aborted after successful connection");
       }
 
-      console.log(`WLED DDP connection initialized to ${host}:${port}`);
+      logger.info(`WLED DDP connection initialized to ${host}:${port}`);
       return { socket, client };
     } catch (error) {
       if (signal?.aborted) throw new Error("Connection aborted");
 
       attempt++;
       const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
-      console.error(
+      logger.error(
         `WLED DDP connection failed to ${host}:${port}, retrying in ${delay}ms... error was: ${error}`,
       );
       await sleep(delay);
@@ -140,10 +140,10 @@ export const createAndConnectWLEDDDP = async ({
     async close(): Promise<void> {
       if (isClosedOrClosing) return;
       isClosedOrClosing = true;
-      console.log(`Closing WLED DDP connection to ${host}:${port}`);
+      logger.info(`Closing WLED DDP connection to ${host}:${port}`);
       socket.close();
       await client.turnOff();
-      console.log(`Closed WLED DDP connection to ${host}:${port}`);
+      logger.info(`Closed WLED DDP connection to ${host}:${port}`);
     },
   };
 };

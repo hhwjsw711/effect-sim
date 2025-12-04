@@ -1,10 +1,10 @@
-/* eslint-disable react-refresh/only-export-components */
 import { useEffect } from "react";
 import type { WebSocket, RawData } from "ws";
 import { WebSocketServer } from "ws";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 import { Id } from "../convex/_generated/dataModel";
 import { observer } from "mobx-react-lite";
+import { logger } from "./utils/logger";
 
 const CONTROL_PORT = Number(process.env.BUN_WS_PORT ?? 8787);
 
@@ -37,10 +37,10 @@ export const ClientDataSocket = observer(({ app }: { app: HWIRAppModel }) => {
         string.onData.dispatch(rgbBytes);
       });
     });
-    console.log(`WS listening on ws://localhost:${CONTROL_PORT}`);
+    logger.info(`WS listening on ws://localhost:${CONTROL_PORT}`);
 
     return () => {
-      console.log(`WS closing..`);
+      logger.info(`WS closing..`);
       wssControl.close();
     };
   }, []);

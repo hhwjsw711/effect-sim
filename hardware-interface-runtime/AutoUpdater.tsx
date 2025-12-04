@@ -79,9 +79,10 @@ export const AutoUpdater = ({
       logger.info("========================================");
 
       const updateScript = "hardware-interface-runtime/updateAndRestart.ts";
+      const isWindows = process.platform === "win32";
 
       // Pass current settings to update script so it can restart with same config
-      const args = [
+      const scriptArgs = [
         updateScript,
         "--project",
         projectId,
@@ -89,20 +90,34 @@ export const AutoUpdater = ({
         playlistId ?? "null",
       ];
 
-      const child = spawn("bun", args, {
-        detached: true,
-        stdio: ["ignore", "inherit", "inherit"],
-        shell: true,
-      });
+      logger.info(`Spawning update script with args: ${scriptArgs.join(" ")}`);
+      logger.info(`Platform: ${process.platform}`);
 
-      child.unref();
+      if (isWindows) {
+        // On Windows, use 'start' to create a truly detached process
+        const startArgs = ["/c", "start", '""', "bun", ...scriptArgs];
+        logger.info(`Windows spawn: cmd ${startArgs.join(" ")}`);
 
-      logger.info("Update script spawned, shutting down...");
+        const child = spawn("cmd", startArgs, {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: false,
+        });
+        child.unref();
+      } else {
+        const child = spawn("bun", scriptArgs, {
+          detached: true,
+          stdio: "ignore",
+        });
+        child.unref();
+      }
+
+      logger.info("Update script spawned, shutting down in 2 seconds...");
 
       setTimeout(() => {
-        logger.info("Goodbye! Restarting...");
+        logger.info("Goodbye! Update script will restart us...");
         process.exit(0);
-      }, 1000);
+      }, 2000);
     };
 
     // Initial check after 10 seconds

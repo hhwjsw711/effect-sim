@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HWStringModel } from "./models/HWStringModel";
 import { createAndConnectWLEDDDP, WLEDDDPConnection } from "./models/WLED_DDP";
 import { observer } from "mobx-react-lite";
+import { logger } from "./utils/logger";
 
 export const String = observer(({ model }: { model: HWStringModel }) => {
   const [connection, setConnection] = useState<WLEDDDPConnection | null>(null);
@@ -23,13 +24,13 @@ export const String = observer(({ model }: { model: HWStringModel }) => {
         setConnection(_connection);
       })
       .catch((e) => {
-        console.error(`Error connecting to '${name}': ${e}`);
+        logger.error(`Error connecting to '${name}': ${e}`);
       });
 
     return () => {
       abortController.abort();
       _connection?.close().catch((e) => {
-        console.error(`Error closing connection to '${name}': ${e}`);
+        logger.error(`Error closing connection to '${name}': ${e}`);
       });
     };
   }, [model.string.ipAddress, model.string.port]);
@@ -41,7 +42,7 @@ export const String = observer(({ model }: { model: HWStringModel }) => {
       //   `Sending '${rgb.length}' bytes data to '${model.string.name}'`,
       // );
       connection.send(rgb).catch((e) => {
-        console.error(
+        logger.error(
           `Error sending packet of ${rgb.length} bytes to '${model.string.name}': ${e}`,
         );
       });
@@ -53,7 +54,7 @@ export const String = observer(({ model }: { model: HWStringModel }) => {
     const brightness = model.string.brightness;
     const name = model.string.name;
     connection.setBrightness(brightness).catch((e) => {
-      console.error(
+      logger.error(
         `Error setting brightness to ${brightness} for '${name}': ${e}`,
       );
     });

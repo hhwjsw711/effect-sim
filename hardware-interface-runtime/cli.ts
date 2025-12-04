@@ -4,6 +4,7 @@ import { Id } from "../convex/_generated/dataModel";
 import { Command } from "commander";
 import prompts from "prompts";
 import { iife } from "../shared/misc";
+import { logger } from "./utils/logger";
 
 export const runSetupCLI = async (convexUrl: string) => {
   const program = new Command();
@@ -22,7 +23,7 @@ export const runSetupCLI = async (convexUrl: string) => {
     if (options.project) return options.project as Id<"projects">;
     const projects = await client.query(api.model.listProjects, {});
     if (projects.length === 0) {
-      console.error("No projects found.");
+      logger.error("No projects found.");
       process.exit(1);
     }
 
@@ -42,7 +43,7 @@ export const runSetupCLI = async (convexUrl: string) => {
       projectId: projectId as Id<"projects">,
     });
     if (playlists.length === 0) {
-      console.error("No playlists found.");
+      logger.error("No playlists found.");
       process.exit(1);
     }
 
