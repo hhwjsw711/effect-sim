@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.mikecann.effect-sim.hwir</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mikeysee/.bun/bin/bun</string>
+        <string>run</string>
+        <string>hwir</string>
+        <string>--project</string>
+        <string>jh7evn9abjw0qyv96xvzk21nd97w8cjw</string>
+        <string>--playlist</string>
+        <string>j977p9kvvvmmzd42g7wcjeaxzh7w8bxm</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/mikeysee/dev/code/effect-sim</string>
+    
+    <key>UserName</key>
+    <string>mikeysee</string>
+    
+    <key>GroupName</key>
+    <string>staff</string>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/mikeysee/dev/code/effect-sim/logs/hwir.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/mikeysee/dev/code/effect-sim/logs/hwir.error.log</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+</dict>
+</plist>
