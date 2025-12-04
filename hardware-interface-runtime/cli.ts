@@ -8,12 +8,9 @@ import { logger } from "./utils/logger";
 
 export const runSetupCLI = async (convexUrl: string) => {
   const program = new Command();
-  program.option("-p, --project <id>", "Project ID").parse(process.argv);
   program
-    .option(
-      "-l, --playlist <id> | null",
-      "Playlist ID (or 'null' for listen mode)",
-    )
+    .option("-p, --project <id>", "Project ID")
+    .option("-l, --playlist <id>", "Playlist ID (or 'null' for listen mode)")
     .parse(process.argv);
 
   const options = program.opts();
