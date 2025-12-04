@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { render } from "react-nil";
 import { ConvexReactClient, ConvexProvider } from "convex/react";
 import { App } from "./App";

@@ -12,7 +12,7 @@ export class HWIRAppModel {
   constructor(
     public readonly startupSettings: {
       projectId: Id<"projects">;
-      playlistId: Id<"playlists">;
+      playlistId: Id<"playlists"> | null;
     },
   ) {
     makeAutoObservable(this);
