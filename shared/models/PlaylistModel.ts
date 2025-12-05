@@ -38,6 +38,13 @@ export class PlaylistModel {
       .filter((seq): seq is SequenceModel => Boolean(seq));
   }
 
+  get availableSequences(): SequenceModel[] {
+    if (!this.project?.sequences) return [];
+    return this.project.sequences.filter(
+      (seq) => seq.projectId === this.projectId,
+    );
+  }
+
   get sequencesNotOnPlaylist(): SequenceModel[] {
     if (!this.project?.sequences) return [];
     return this.project.sequences.filter(
@@ -64,6 +71,12 @@ export class PlaylistModel {
   removeSequence(sequenceId: Id<"sequences">) {
     const index = this.doc.sequenceIds.indexOf(sequenceId);
     if (index >= 0) this.doc.sequenceIds.splice(index, 1);
+  }
+
+  removeSequenceByIndex(index: number) {
+    if (index >= 0 && index < this.doc.sequenceIds.length) {
+      this.doc.sequenceIds.splice(index, 1);
+    }
   }
 
   reorderSequences(oldIndex: number, newIndex: number) {

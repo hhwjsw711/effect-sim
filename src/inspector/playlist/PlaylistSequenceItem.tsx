@@ -10,11 +10,13 @@ import { autorun } from "mobx";
 export function PlaylistSequenceItem({
   sequence,
   sequenceIndex,
+  sortableId,
   onRemove,
   playerModel,
 }: {
   sequence: SequenceModel;
   sequenceIndex: number;
+  sortableId: string;
   onRemove: () => void;
   playerModel: PlaylistPlayerModel | null;
 }) {
@@ -26,7 +28,7 @@ export function PlaylistSequenceItem({
     transition,
     isDragging,
   } = useSortable({
-    id: sequence._id,
+    id: sortableId,
   });
 
   const style = {

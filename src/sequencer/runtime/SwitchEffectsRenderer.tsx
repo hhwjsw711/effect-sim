@@ -17,8 +17,6 @@ export function SwitchEffectsRenderer() {
         const validatedProps = effect.validatedProps;
         const targetNodeIds = effect.targetNodeIds;
 
-        console.log("RENDER");
-
         return targetNodeIds.map((nodeId) => {
           const node = nodesMap.get(nodeId);
           if (!node) return null;

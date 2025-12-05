@@ -36,6 +36,8 @@ export function PlaylistSequencesSection({
     }),
   );
 
+  const sortableIds = playlist.sequenceIds.map((id, index) => `${id}-${index}`);
+
   return (
     <Stack gap="md">
       <Box>
@@ -44,7 +46,7 @@ export function PlaylistSequencesSection({
         </Text>
         <Select
           placeholder="Select a sequence"
-          data={playlist.sequencesNotOnPlaylist.map((seq) => ({
+          data={playlist.availableSequences.map((seq) => ({
             value: seq._id,
             label: seq.name,
           }))}
@@ -57,13 +59,7 @@ export function PlaylistSequencesSection({
             playlist.addSequence(value as Id<"sequences">);
             setSelectedSequenceId(null);
           }}
-          disabled={playlist.sequencesNotOnPlaylist.length === 0}
         />
-        {playlist.sequencesNotOnPlaylist.length === 0 && (
-          <Text size="xs" c="dimmed" mt="xs">
-            All sequences have been added to this playlist
-          </Text>
-        )}
       </Box>
 
       <Box>
@@ -83,12 +79,8 @@ export function PlaylistSequencesSection({
 
               if (!over || active.id === over.id) return;
 
-              const oldIndex = playlist.sequenceIds.indexOf(
-                active.id as Id<"sequences">,
-              );
-              const newIndex = playlist.sequenceIds.indexOf(
-                over.id as Id<"sequences">,
-              );
+              const oldIndex = sortableIds.indexOf(active.id as string);
+              const newIndex = sortableIds.indexOf(over.id as string);
 
               if (oldIndex === -1 || newIndex === -1) return;
 
@@ -96,17 +88,18 @@ export function PlaylistSequencesSection({
             }}
           >
             <SortableContext
-              items={playlist.sequenceIds}
+              items={sortableIds}
               strategy={verticalListSortingStrategy}
             >
               <Stack gap="xs">
                 {playlist.sequences.map((sequence, index) => (
                   <PlaylistSequenceItem
-                    key={sequence._id}
+                    key={sortableIds[index]}
+                    sortableId={sortableIds[index]}
                     sequence={sequence}
                     sequenceIndex={index}
                     onRemove={() => {
-                      playlist.removeSequence(sequence._id);
+                      playlist.removeSequenceByIndex(index);
                     }}
                     playerModel={playerModel}
                   />
