@@ -93,7 +93,7 @@ export class AppModel {
       sequencers: this.sequencers.reduce(
         (acc, sequencer) => {
           acc[sequencer.id] = {
-            selectedSequenceId: sequencer.selectedSequenceId,
+            selectedSequenceId: sequencer.selectedSequence?._id ?? null,
           };
           return acc;
         },

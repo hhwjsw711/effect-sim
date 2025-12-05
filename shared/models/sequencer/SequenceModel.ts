@@ -8,7 +8,7 @@ import { createId } from "../types";
 export class SequenceModel {
   constructor(
     public doc: Doc<"sequences">,
-    public readonly project?: ProjectModel,
+    public readonly project: ProjectModel,
   ) {
     makeAutoObservable(this);
   }

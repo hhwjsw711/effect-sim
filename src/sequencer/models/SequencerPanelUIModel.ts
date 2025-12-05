@@ -1,10 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import type { AppModel } from "../../common/models/AppModel";
-import { Id } from "../../../convex/_generated/dataModel";
 import { SequenceUIModel } from "./SequenceUIModel";
+import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
+import { Id } from "../../../convex/_generated/dataModel";
 
 export class SequencerPanelUIModel {
-  selectedSequenceId: Id<"sequences"> | null = null;
+  selectedSequence: SequenceModel | null = null;
 
   constructor(
     public readonly app: AppModel,
@@ -14,25 +15,27 @@ export class SequencerPanelUIModel {
 
     const persistedData = app.persistedData.sequencers?.[id];
     if (persistedData?.selectedSequenceId)
-      this.selectedSequenceId = persistedData.selectedSequenceId;
+      this.selectedSequence =
+        app.project?.findSequenceById(persistedData.selectedSequenceId) ?? null;
   }
 
   get sequence() {
-    const model =
-      this.app.project?.sequences.find(
-        (s) => s._id === this.selectedSequenceId,
-      ) ?? null;
-    if (!model) return null;
-    return new SequenceUIModel(this, model);
+    if (!this.selectedSequence) return null;
+    return new SequenceUIModel(this, this.selectedSequence);
   }
 
-  setSelectedSequenceId(sequenceId: Id<"sequences"> | null) {
-    this.selectedSequenceId = sequenceId;
+  setSelectedSequence(sequence: SequenceModel | Id<"sequences"> | null) {
+    runInAction(() => {
+      if (typeof sequence === "string")
+        this.selectedSequence =
+          this.app.project?.findSequenceById(sequence) ?? null;
+      else this.selectedSequence = sequence;
+    });
   }
 
   selectFirstSequence() {
     if (!this.app.project) return;
     if (this.app.project.sequences.length === 0) return;
-    this.setSelectedSequenceId(this.app.project.sequences[0]._id ?? null);
+    this.setSelectedSequence(this.app.project.sequences[0] ?? null);
   }
 }

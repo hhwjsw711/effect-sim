@@ -108,6 +108,10 @@ export class ProjectModel {
     this.nodes.push(node);
   }
 
+  findSequenceById(id: Id<"sequences">): SequenceModel | null {
+    return this.sequences.find((s) => s._id === id) ?? null;
+  }
+
   setName(name: string) {
     this.doc.name = name;
   }

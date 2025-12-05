@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Button, Modal, Stack, TextInput, NumberInput } from "@mantine/core";
-import type { Id } from "../../../convex/_generated/dataModel";
 import { useApp } from "../../common/AppContext";
 import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import { createTempId } from "../../../shared/models/types";
@@ -18,14 +17,17 @@ export default function CreateSequenceModal({
 
   const newSequence = useMemo(
     () =>
-      new SequenceModel({
-        name: "New Sequence",
-        numFrames: 500,
-        tracks: [],
-        projectId: project._id,
-        _creationTime: 0,
-        _id: createTempId("sequences"),
-      }),
+      new SequenceModel(
+        {
+          name: "New Sequence",
+          numFrames: 500,
+          tracks: [],
+          projectId: project._id,
+          _creationTime: 0,
+          _id: createTempId("sequences"),
+        },
+        project,
+      ),
     [project],
   );
 

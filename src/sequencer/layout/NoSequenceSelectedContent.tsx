@@ -25,16 +25,19 @@ export default function NoSequenceSelectedContent() {
     <Center style={{ flex: 1, flexDirection: "column", gap: 8 }}>
       <Button
         onClick={() => {
-          const newSequence = new SequenceModel({
-            name: "New Sequence",
-            numFrames: 500,
-            tracks: [],
-            projectId: project._id,
-            _creationTime: 0,
-            _id: createTempId("sequences"),
-          });
+          const newSequence = new SequenceModel(
+            {
+              name: "New Sequence",
+              numFrames: 500,
+              tracks: [],
+              projectId: project._id,
+              _creationTime: 0,
+              _id: createTempId("sequences"),
+            },
+            project,
+          );
           project.addSequence(newSequence);
-          sequencer.setSelectedSequenceId(newSequence._id);
+          sequencer.setSelectedSequence(newSequence);
         }}
       >
         Create Sequence
