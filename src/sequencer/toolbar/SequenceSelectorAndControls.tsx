@@ -24,7 +24,7 @@ export default function SequenceSelectorAndControls() {
         data={sequences.map((s) => ({ label: s.name, value: s._id }))}
         value={sequencer.sequence?.sequence._id ?? null}
         onChange={(value) =>
-          sequencer.setSelectedSequence(value as Id<"sequences"> | null)
+          sequencer.setSelectedSequenceId(value as Id<"sequences"> | null)
         }
         placeholder="Select a sequence"
         checkIconPosition="right"
@@ -58,14 +58,14 @@ export default function SequenceSelectorAndControls() {
             opened={editOpen}
             onClose={() => setEditOpen(false)}
             sequence={sequencer.sequence.sequence}
-            onDeleted={() => sequencer.setSelectedSequence(null)}
+            onDeleted={() => sequencer.setSelectedSequenceId(null)}
           />
         </>
       ) : null}
       <CreateSequenceModal
         opened={createOpen}
         onClose={() => setCreateOpen(false)}
-        onCreated={(sequence) => sequencer.setSelectedSequence(sequence)}
+        onCreated={(sequence) => sequencer.setSelectedSequenceId(sequence._id)}
       />
     </Group>
   );

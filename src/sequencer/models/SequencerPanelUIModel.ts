@@ -1,12 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import type { AppModel } from "../../common/models/AppModel";
-import type { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import { Id } from "../../../convex/_generated/dataModel";
 import { SequenceUIModel } from "./SequenceUIModel";
-import { iife } from "../../../shared/misc";
 
 export class SequencerPanelUIModel {
-  sequence: SequenceUIModel | null = null;
+  selectedSequenceId: Id<"sequences"> | null = null;
 
   constructor(
     public readonly app: AppModel,
@@ -16,36 +14,25 @@ export class SequencerPanelUIModel {
 
     const persistedData = app.persistedData.sequencers?.[id];
     if (persistedData?.selectedSequenceId)
-      this.setSelectedSequence(persistedData.selectedSequenceId);
+      this.selectedSequenceId = persistedData.selectedSequenceId;
   }
 
-  get selectedSequenceId() {
-    return this.sequence?.sequence._id ?? null;
+  get sequence() {
+    const model =
+      this.app.project?.sequences.find(
+        (s) => s._id === this.selectedSequenceId,
+      ) ?? null;
+    if (!model) return null;
+    return new SequenceUIModel(this, model);
   }
 
-  setSelectedSequence(sequence: Id<"sequences"> | SequenceModel | null) {
-    const sequenceModel = iife(() => {
-      if (typeof sequence === "string")
-        return (
-          this.app.project?.sequences.find((s) => s._id === sequence) ?? null
-        );
-
-      return sequence;
-    });
-
-    if (!sequenceModel) {
-      this.sequence = null;
-      return;
-    }
-
-    runInAction(() => {
-      this.sequence = new SequenceUIModel(this, sequenceModel);
-    });
+  setSelectedSequenceId(sequenceId: Id<"sequences"> | null) {
+    this.selectedSequenceId = sequenceId;
   }
 
   selectFirstSequence() {
     if (!this.app.project) return;
     if (this.app.project.sequences.length === 0) return;
-    this.setSelectedSequence(this.app.project.sequences[0]);
+    this.setSelectedSequenceId(this.app.project.sequences[0]._id ?? null);
   }
 }
