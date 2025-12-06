@@ -8,6 +8,7 @@ import {
   NumberInput,
 } from "@mantine/core";
 import { useConfirmation } from "../../common/confirmation/ConfirmationProvider";
+import { useAdaptiveStep } from "../../common/hooks/useAdaptiveStep";
 import type { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 
 export default function EditSequenceModal({
@@ -22,6 +23,7 @@ export default function EditSequenceModal({
   onDeleted: () => void;
 }) {
   const { confirm } = useConfirmation();
+  const step = useAdaptiveStep(sequence.numFrames);
   return (
     <Modal opened={opened} onClose={onClose} title="Edit Sequence" size="sm">
       <Stack gap="sm">
@@ -33,6 +35,7 @@ export default function EditSequenceModal({
         <NumberInput
           label="Number of Frames"
           value={sequence.numFrames}
+          step={step}
           onChange={(value) => sequence.setNumFrames(value as number)}
           min={1}
           max={10000}

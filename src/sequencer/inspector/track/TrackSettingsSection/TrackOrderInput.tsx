@@ -1,5 +1,6 @@
 import { Group, NumberInput, Text } from "@mantine/core";
 import { useState } from "react";
+import { useAdaptiveStep } from "../../../../common/hooks/useAdaptiveStep";
 
 type TrackOrderInputProps = {
   trackIndex: number;
@@ -13,6 +14,7 @@ export function TrackOrderInput({
   onOrderChange,
 }: TrackOrderInputProps) {
   const [order, setOrder] = useState<number>(trackIndex + 1);
+  const step = useAdaptiveStep(order);
 
   const handleOrderChange = (newOrder: number | string) => {
     if (typeof newOrder !== "number") return;
@@ -31,6 +33,7 @@ export function TrackOrderInput({
       </Text>
       <NumberInput
         value={order}
+        step={step}
         onChange={(value) => {
           setOrder(value as number);
           handleOrderChange(value);
@@ -42,4 +45,3 @@ export function TrackOrderInput({
     </Group>
   );
 }
-

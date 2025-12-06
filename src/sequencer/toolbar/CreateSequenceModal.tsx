@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Button, Modal, Stack, TextInput, NumberInput } from "@mantine/core";
 import { useApp } from "../../common/AppContext";
+import { useAdaptiveStep } from "../../common/hooks/useAdaptiveStep";
 import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import { createTempId } from "../../../shared/models/types";
 
@@ -30,6 +31,7 @@ export default function CreateSequenceModal({
       ),
     [project],
   );
+  const step = useAdaptiveStep(newSequence.numFrames);
 
   return (
     <Modal opened={opened} onClose={onClose} title="Create Sequence" size="sm">
@@ -51,6 +53,7 @@ export default function CreateSequenceModal({
         <NumberInput
           label="Number of Frames"
           value={newSequence.numFrames}
+          step={step}
           onChange={(value) => newSequence.setNumFrames(value as number)}
           min={1}
           max={10000}

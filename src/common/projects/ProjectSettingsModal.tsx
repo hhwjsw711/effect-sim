@@ -1,6 +1,7 @@
 import { Modal, Stack, NumberInput, TextInput } from "@mantine/core";
 import { useApp } from "../AppContext";
 import { DEFAULT_FRAMERATE } from "./projectConstants";
+import { useAdaptiveStep } from "../hooks/useAdaptiveStep";
 
 export default function ProjectSettingsModal({
   opened,
@@ -12,7 +13,10 @@ export default function ProjectSettingsModal({
   const project = useApp().getProject();
 
   const currentStringLedSize = project.settings.stringLedSize ?? 0.1;
-  const currentFramerate = project.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
+  const currentFramerate =
+    project.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
+  const stringLedSizeStep = useAdaptiveStep(currentStringLedSize);
+  const framerateStep = useAdaptiveStep(currentFramerate);
 
   return (
     <Modal opened={opened} onClose={onClose} title="Project Settings" size="sm">
@@ -43,7 +47,7 @@ export default function ProjectSettingsModal({
           }}
           min={0.01}
           max={1.0}
-          step={0.1}
+          step={stringLedSizeStep}
           decimalScale={2}
         />
         <NumberInput
@@ -60,7 +64,7 @@ export default function ProjectSettingsModal({
           }}
           min={1}
           max={120}
-          step={1}
+          step={framerateStep}
           suffix=" FPS"
         />
       </Stack>

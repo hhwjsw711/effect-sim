@@ -14,6 +14,7 @@ import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { StringNodeModel } from "../../../shared/models/StringNodeModel";
 import { iife } from "../../../shared/misc";
+import { useAdaptiveStep } from "../../common/hooks/useAdaptiveStep";
 
 function IconPickerInput({
   value,
@@ -76,6 +77,8 @@ export default function StringSettingsSection({
   const port = node.port ?? 4048;
   const ledCount = node.ledCount ?? 50;
   const brightness = node.brightness ?? 128;
+  const portStep = useAdaptiveStep(port);
+  const ledCountStep = useAdaptiveStep(ledCount);
 
   return (
     <Stack pt="xs" gap="xs">
@@ -125,6 +128,7 @@ export default function StringSettingsSection({
           value={port}
           min={1}
           max={65535}
+          step={portStep}
           stepHoldDelay={500}
           stepHoldInterval={100}
           onChange={(v) => {
@@ -141,6 +145,7 @@ export default function StringSettingsSection({
           value={ledCount}
           min={1}
           max={10000}
+          step={ledCountStep}
           stepHoldDelay={500}
           stepHoldInterval={100}
           onChange={(v) => {
