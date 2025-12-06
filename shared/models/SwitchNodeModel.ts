@@ -6,7 +6,7 @@ import { NodeDocOfKind } from "../../convex/schema";
 export class SwitchNodeModel {
   constructor(
     public doc: NodeDocOfKind<"switch">,
-    public readonly project?: ProjectModel,
+    public readonly project: ProjectModel,
   ) {
     makeAutoObservable(this);
   }
@@ -106,6 +106,11 @@ export class SwitchNodeModel {
   }
 
   async turnOn() {
+    if (import.meta.env.VITE_IS_DEV_MODE) {
+      this.setStatus(true);
+      return;
+    }
+
     const url = `${this.baseUrl}/turn_on`;
 
     const response = await fetch(url, { method: "POST" });
@@ -119,6 +124,11 @@ export class SwitchNodeModel {
   }
 
   async turnOff() {
+    if (import.meta.env.VITE_IS_DEV_MODE) {
+      this.setStatus(false);
+      return;
+    }
+
     const url = `${this.baseUrl}/turn_off`;
 
     const response = await fetch(url, { method: "POST" });
@@ -132,6 +142,13 @@ export class SwitchNodeModel {
   }
 
   async toggle() {
+    const newState = this.doc.isOn === null ? true : !this.doc.isOn;
+
+    if (import.meta.env.VITE_IS_DEV_MODE) {
+      this.setStatus(newState);
+      return;
+    }
+
     const url = `${this.baseUrl}/toggle`;
 
     const response = await fetch(url, { method: "POST" });
@@ -141,11 +158,14 @@ export class SwitchNodeModel {
         `Failed to toggle switch at ${this.doc.ipAddress}: ${response.statusText}`,
       );
 
-    const newState = this.doc.isOn === null ? true : !this.doc.isOn;
     this.setStatus(newState);
   }
 
   async refreshStatus() {
+    if (import.meta.env.VITE_IS_DEV_MODE)
+      // In dev mode, don't fetch - just keep current status
+      return;
+
     // For type2, assuming /switch/switch/ or similar returns JSON with state
     // This might need adjustment if type2 has a different status endpoint
     const url = `${this.baseUrl}/`;

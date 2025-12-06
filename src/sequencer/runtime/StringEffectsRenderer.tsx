@@ -8,8 +8,6 @@ export function StringEffectsRenderer() {
   const dataStore = useLedData();
   const effects = runtime.activeStringEffects;
 
-
-
   return (
     <>
       {effects.map((effect) => {

@@ -24,18 +24,50 @@ export class SequenceRuntimeModel {
     this.sequence = sequence;
   }
 
-  get activeEffects(): SequenceRuntimeEffectModel[] {
-    if (!this.sequence) return [];
+  activeEffects: SequenceRuntimeEffectModel[] = [];
+  private activeEffectsById = new Map<string, SequenceRuntimeEffectModel>();
+
+  updateActiveEffects() {
+    if (!this.sequence) {
+      if (this.activeEffects.length === 0) return;
+      this.activeEffects = [];
+      this.activeEffectsById.clear();
+      return;
+    }
 
     const currentFrame = this.playhead.frame;
-    const effects: SequenceRuntimeEffectModel[] = [];
+    const newActiveEventIds = new Set<string>();
 
+    // Find which events are currently active
     for (const track of this.sequence.tracks)
       for (const event of track.events)
         if (currentFrame >= event.startFrame && currentFrame < event.endFrame)
-          effects.push(new SequenceRuntimeEffectModel(this, event));
+          newActiveEventIds.add(event.id);
 
-    return effects;
+    // Check if the set of active events changed
+    const currentIds = new Set(this.activeEffectsById.keys());
+    const sameSet =
+      currentIds.size === newActiveEventIds.size &&
+      [...newActiveEventIds].every((id) => currentIds.has(id));
+
+    if (sameSet) return;
+
+    // Rebuild the effects array, reusing existing models where possible
+    const newEffects: SequenceRuntimeEffectModel[] = [];
+    const newEffectsById = new Map<string, SequenceRuntimeEffectModel>();
+
+    for (const track of this.sequence.tracks)
+      for (const event of track.events) {
+        if (!newActiveEventIds.has(event.id)) continue;
+
+        const existing = this.activeEffectsById.get(event.id);
+        const effect = existing ?? new SequenceRuntimeEffectModel(this, event);
+        newEffects.push(effect);
+        newEffectsById.set(event.id, effect);
+      }
+
+    this.activeEffects = newEffects;
+    this.activeEffectsById = newEffectsById;
   }
 
   get activeStringEffects(): SequenceRuntimeEffectModel[] {

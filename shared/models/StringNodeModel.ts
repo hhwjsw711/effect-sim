@@ -7,7 +7,7 @@ import { NodeDocOfKind } from "../../convex/schema";
 export class StringNodeModel {
   constructor(
     public doc: NodeDocOfKind<"string">,
-    public readonly project?: ProjectModel,
+    public readonly project: ProjectModel,
   ) {
     makeAutoObservable(this);
   }
