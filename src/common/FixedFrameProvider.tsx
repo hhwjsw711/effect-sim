@@ -4,22 +4,18 @@ import { createContext, useContext, useEffect, useMemo } from "react";
 import { Signal } from "../../shared/Signal";
 import { observer } from "mobx-react-lite";
 
-export type FixedFrameEvent = {
-  nowMs: number;
-  deltaMs: number;
-  frameIndex: number;
-};
-
-export type FixedFrameContextValue = {
+export type FrameContextValue = {
   signal: Signal;
+  fps: number;
   frameMs: number;
 };
 
-const FixedFrameContext = createContext<FixedFrameContextValue | null>(null);
+const FrameContext = createContext<FrameContextValue | null>(null);
 
-export const FixedFrameProvider = observer(
-  ({ children, frameMs = 16 }: { children: ReactNode; frameMs?: number }) => {
-    const clampedFrameMs = frameMs > 0 ? frameMs : 16;
+export const FrameProvider = observer(
+  ({ children, fps = 60 }: { children: ReactNode; fps?: number }) => {
+    const clampedFps = fps > 0 ? fps : 60;
+    const frameMs = 1000 / clampedFps;
 
     // Stable signal instance
     const signal = useMemo(() => new Signal(), []);
@@ -39,9 +35,9 @@ export const FixedFrameProvider = observer(
           lastTimestamp = timestamp;
           accumulatedMs += deltaMs;
 
-          if (accumulatedMs >= clampedFrameMs) {
-            const framesToAdvance = Math.floor(accumulatedMs / clampedFrameMs);
-            accumulatedMs -= framesToAdvance * clampedFrameMs;
+          if (accumulatedMs >= frameMs) {
+            const framesToAdvance = Math.floor(accumulatedMs / frameMs);
+            accumulatedMs -= framesToAdvance * frameMs;
 
             for (let i = 0; i < framesToAdvance; i++) signal.dispatch();
           }
@@ -55,26 +51,22 @@ export const FixedFrameProvider = observer(
         stopped = true;
         if (rafId) cancelAnimationFrame(rafId);
       };
-    }, [clampedFrameMs, signal]);
+    }, [frameMs, signal]);
 
-    const value = useMemo<FixedFrameContextValue>(
-      () => ({ signal, frameMs: clampedFrameMs }),
-      [signal, clampedFrameMs],
+    const value = useMemo<FrameContextValue>(
+      () => ({ signal, fps: clampedFps, frameMs }),
+      [signal, clampedFps, frameMs],
     );
 
     return (
-      <FixedFrameContext.Provider value={value}>
-        {children}
-      </FixedFrameContext.Provider>
+      <FrameContext.Provider value={value}>{children}</FrameContext.Provider>
     );
   },
 );
 
-export function useFixedFrameContext(): FixedFrameContextValue {
-  const ctx = useContext(FixedFrameContext);
+export function useFrameContext(): FrameContextValue {
+  const ctx = useContext(FrameContext);
   if (!ctx)
-    throw new Error(
-      "useFixedFrameContext must be used within FixedFrameProvider",
-    );
+    throw new Error("useFrameContext must be used within FrameProvider");
   return ctx;
 }

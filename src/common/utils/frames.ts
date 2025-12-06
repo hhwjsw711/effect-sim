@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { useFixedFrameContext } from "../FixedFrameProvider";
+import { useFrameContext } from "../FixedFrameProvider";
 
-export type FixedFrameCallback = () => void;
+export type FrameCallback = () => void;
 
-export function useFrame(callback: FixedFrameCallback, deps?: unknown[]) {
-  const { signal } = useFixedFrameContext();
+export function useFrame(callback: FrameCallback, deps?: unknown[]) {
+  const { signal } = useFrameContext();
   useEffect(() => signal.add(callback), [signal, callback, ...(deps ?? [])]);
 }

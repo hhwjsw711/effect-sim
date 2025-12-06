@@ -4,7 +4,7 @@ import { String } from "./String";
 import { LedDataStoreContext } from "../src/data/LedDataStoreContext";
 import { HeadlessPlaylistPlayer } from "./HeadlessPlaylistPlayer";
 import { HeadlessLedDataDispatcher } from "./HeadlessLedDataDispatcher";
-import { FixedFrameProvider } from "../src/common/FixedFrameProvider";
+import { FrameProvider } from "../src/common/FixedFrameProvider";
 import { useProjectModel } from "./hooks";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 import { DEFAULT_FRAMERATE } from "../src/common/projects/projectConstants";
@@ -20,13 +20,12 @@ export const App = observer(({ app }: { app: HWIRAppModel }) => {
 
   const project = app.project;
 
-  const framerate = project?.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
-  const frameMs = 1000 / framerate;
+  const fps = project?.settings.defaultFramerate ?? DEFAULT_FRAMERATE;
 
   return (
     <LedDataStoreContext.Provider value={app.dataStore}>
       {shouldAutoUpdate ? <AutoUpdater app={app} /> : null}
-      <FixedFrameProvider frameMs={frameMs}>
+      <FrameProvider fps={fps}>
         {app.strings.map((string) => (
           <String key={string.string._id} model={string} />
         ))}
@@ -39,7 +38,7 @@ export const App = observer(({ app }: { app: HWIRAppModel }) => {
         ) : (
           <ClientDataSocket app={app} />
         )}
-      </FixedFrameProvider>
+      </FrameProvider>
     </LedDataStoreContext.Provider>
   );
 });

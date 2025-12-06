@@ -10,7 +10,7 @@ import { RouteProvider } from "./router.ts";
 import { ConfirmationProvider } from "./common/confirmation/ConfirmationProvider";
 import { MantineProvider } from "@mantine/core";
 import { AppProvider } from "./common/AppContext.tsx";
-import { ProjectFixedFrameProvider } from "./common/ProjectFixedFrameProvider";
+import { ProjectFrameProvider } from "./common/ProjectFixedFrameProvider";
 import { AppSyncer } from "./common/models/AppSyncer.tsx";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -25,11 +25,11 @@ createRoot(rootElement).render(
         <MantineProvider defaultColorScheme="dark">
           <ConfirmationProvider>
             <AppProvider>
-              <ProjectFixedFrameProvider>
+              <ProjectFrameProvider>
                 <AppSyncer>
                   <App />
                 </AppSyncer>
-              </ProjectFixedFrameProvider>
+              </ProjectFrameProvider>
             </AppProvider>
           </ConfirmationProvider>
         </MantineProvider>
