@@ -9,3 +9,4 @@ HWIR_AUTO_UPDATE
 ## Todo:
 
 - Different camera controls
+- Allow me to reuse some events / sequence as a group or sub-sequence?
