@@ -13,8 +13,8 @@ export class SequenceModel {
     public doc: Doc<"sequences">,
     public readonly project: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   get tracks() {

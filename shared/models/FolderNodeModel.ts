@@ -10,8 +10,8 @@ export class FolderNodeModel {
     public doc: NodeDocOfKind<"folder">,
     public readonly project?: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   setLabel(label: string) {

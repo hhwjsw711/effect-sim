@@ -11,8 +11,8 @@ export class SwitchNodeModel {
     public doc: NodeDocOfKind<"switch">,
     public readonly project: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   setName(name: string) {

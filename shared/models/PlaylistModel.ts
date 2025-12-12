@@ -12,8 +12,8 @@ export class PlaylistModel {
     public doc: Doc<"playlists">,
     public readonly project?: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   get sequences(): SequenceModel[] {

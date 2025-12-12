@@ -12,8 +12,8 @@ export class StringNodeModel {
     public doc: NodeDocOfKind<"string">,
     public readonly project: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   setName(name: string) {

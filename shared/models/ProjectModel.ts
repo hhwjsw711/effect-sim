@@ -25,8 +25,8 @@ export class ProjectModel {
   nodes: AllNodeModels[] = [];
 
   constructor(public doc: Doc<"projects">) {
-    exposeDocFields(this);
     makeAutoObservable(this);
+    exposeDocFields(this);
   }
 
   get modelsByTableNameIds() {

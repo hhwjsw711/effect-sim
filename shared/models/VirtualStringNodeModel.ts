@@ -14,10 +14,10 @@ export class VirtualStringNodeModel {
     public doc: NodeDocOfKind<"virtual_string">,
     public readonly project?: ProjectModel,
   ) {
-    exposeDocFields(this);
     makeAutoObservable(this, {
       project: false,
     });
+    exposeDocFields(this);
   }
 
   get segments(): VirtualStringNodeSegmentModel[] {
