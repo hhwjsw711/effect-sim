@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useApp } from "../AppContext";
 
-export const HardwareInterfaceRuntimeAutoconnector = (() => {
+export const HardwareInterfaceRuntimeAutoconnector = () => {
   const app = useApp();
   const runtime = app.hardwareInterfaceRuntime;
 
   useEffect(() => {
     // If autoconnect is disabled, we don't do anything automatically.
-    if (!runtime.autoconnect) return;
+    if (!runtime.shouldAutoConnect) return;
 
     // If we are already connected or connecting, we don't need to trigger anything.
     if (
@@ -27,7 +27,7 @@ export const HardwareInterfaceRuntimeAutoconnector = (() => {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [runtime.autoconnect, runtime.status, runtime]);
+  }, [runtime.shouldAutoConnect, runtime.status, runtime]);
 
   return null;
-});
+};

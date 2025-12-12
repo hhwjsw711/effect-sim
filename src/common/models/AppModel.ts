@@ -13,6 +13,7 @@ import type { AllTrackEventModels } from "../../../shared/models/sequencer";
 import type { PlaylistModel } from "../../../shared/models/PlaylistModel";
 import { HardwareInterfaceRuntimeModel } from "./HardwareInterfaceRuntimeModel";
 import { FlexLayoutModel } from "./FlexLayoutModel";
+import { makePersistable } from "mobx-persist-store";
 
 export type SelectedEntity =
   | { kind: "node"; node: AllNodeModels }
@@ -27,8 +28,6 @@ export type SelectedEntity =
   | { kind: "playlist"; playlist: PlaylistModel }
   | null;
 
-type AppPersistedData = AppModel["persistableData"];
-
 export class AppModel {
   currentProjectId: Id<"projects"> | null = null;
   isMeasureMode = false;
@@ -39,28 +38,18 @@ export class AppModel {
   hardwareInterfaceRuntime: HardwareInterfaceRuntimeModel;
   layout: FlexLayoutModel;
 
-  constructor(readonly persistedData: Partial<AppPersistedData> = {}) {
+  constructor() {
     this.hardwareInterfaceRuntime = new HardwareInterfaceRuntimeModel(this);
     this.layout = new FlexLayoutModel(this);
     makeAutoObservable(this, {
       gardenModel: observable.ref,
-      persistedData: false,
     });
-    this.currentProjectId = persistedData.app?.currentProjectId ?? null;
-  }
-
-  get persistableData() {
-    return {
-      app: {
-        currentProjectId: this.currentProjectId,
-      },
-      hardwareInterfaceRuntime: {
-        autoconnect: this.hardwareInterfaceRuntime.autoconnect,
-      },
-      flex: {
-        model: this.layout.modelJson,
-      },
-    };
+    makePersistable(this, {
+      name: "AppModel",
+      properties: ["currentProjectId"],
+      storage: window.localStorage,
+      debugMode: true,
+    });
   }
 
   get project(): ProjectModel | null {

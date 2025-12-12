@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { AppModel } from "./AppModel";
+import { makePersistable } from "mobx-persist-store";
 
 const defaultWsUrl = (() => {
   const host =
@@ -20,15 +21,20 @@ export type SocketStatus =
 export class HardwareInterfaceRuntimeModel {
   status: SocketStatus = "idle";
   socket: WebSocket | null = null;
-  autoconnect = true;
+  shouldAutoConnect = true;
   readonly wsUrl: string;
   lastError: string | null = null;
 
   constructor(app: AppModel, url?: string) {
     makeAutoObservable(this);
-    this.autoconnect = app.persistedData.hardwareInterfaceRuntime?.autoconnect ?? true;
     this.wsUrl = url ?? WS_URL;
     this.connect();
+    makePersistable(this, {
+      name: "HardwareInterfaceRuntimeModel",
+      properties: ["shouldAutoConnect"],
+      storage: window.localStorage,
+      debugMode: true,
+    });
   }
 
   setStatus(status: SocketStatus) {
@@ -78,7 +84,7 @@ export class HardwareInterfaceRuntimeModel {
   }
 
   setAutoconnect(value: boolean) {
-    this.autoconnect = value;
+    this.shouldAutoConnect = value;
     // Side effects handled by HardwareInterfaceRuntimeConnector
   }
 

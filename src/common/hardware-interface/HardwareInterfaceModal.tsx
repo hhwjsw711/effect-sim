@@ -77,7 +77,7 @@ export const HardwareInterfaceModal = ({
             Autoconnect
           </Text>
           <Switch
-            checked={app.hardwareInterfaceRuntime.autoconnect}
+            checked={app.hardwareInterfaceRuntime.shouldAutoConnect}
             onChange={(e) =>
               app.hardwareInterfaceRuntime.setAutoconnect(
                 e.currentTarget.checked,

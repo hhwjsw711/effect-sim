@@ -8,6 +8,7 @@ import type {
 import { Model, Actions, DockLocation } from "flexlayout-react";
 import { defaultLayoutJson, TabComponentKinds } from "../tabs";
 import { AppModel } from "./AppModel";
+import { makePersistable } from "mobx-persist-store";
 
 export const INSPECTOR_TAB_ID = "tab-inspector";
 export const STRINGS_TAB_ID = "tab-strings";
@@ -19,14 +20,17 @@ export class FlexLayoutModel {
   modelJson: IJsonModel | null = null;
 
   constructor(app: AppModel) {
-    this.model = Model.fromJson(
-      app.persistedData.flex?.model
-        ? app.persistedData.flex?.model
-        : defaultLayoutJson,
-    );
-    this.modelJson = this.model.toJson();
+    this.model = Model.fromJson(defaultLayoutJson);
     makeAutoObservable(this, {
       model: observable.ref,
+    });
+    makePersistable(this, {
+      name: "FlexLayoutModel",
+      properties: ["modelJson"],
+      storage: window.localStorage,
+      debugMode: true,
+    }).then((store) => {
+      this.setModel(Model.fromJson(this.modelJson ?? defaultLayoutJson));
     });
   }
 
@@ -65,8 +69,6 @@ export class FlexLayoutModel {
 
     return map;
   }
-
-  
 
   setModel(nextModel: Model) {
     this.model = nextModel;

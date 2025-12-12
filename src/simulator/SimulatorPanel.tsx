@@ -1,9 +1,4 @@
 import { Canvas } from "@react-three/fiber";
-import {
-  OrbitControls,
-  FlyControls,
-  FirstPersonControls,
-} from "@react-three/drei";
 import { GardenModel } from "./rendering/GardenModel.tsx";
 import SideToolbar from "./ui/SideToolbar.tsx";
 import MeasureTool from "./measure/MeasureTool.tsx";
