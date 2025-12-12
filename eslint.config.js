@@ -45,7 +45,8 @@ export default [
       ],
       "no-empty-pattern": "off",
       curly: ["error", "multi"],
-      "@typescript-eslint/no-empty-object-type": "warn",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-unsafe-declaration-merging": "off",
       "@typescript-eslint/no-unused-vars": [
         "off",
         {

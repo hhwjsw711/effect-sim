@@ -14,6 +14,10 @@ import type { PathPoint } from "./types";
 import { ensure } from "../ensure";
 import { ProjectData } from "../../convex/model";
 import { exhaustiveCheck } from "../misc";
+import { exposeDocFields } from "./modelUtils";
+
+// Interface merging - tells TypeScript that ProjectModel has all the doc fields
+export interface ProjectModel extends Readonly<Doc<"projects">> {}
 
 export class ProjectModel {
   playlists: PlaylistModel[] = [];
@@ -21,19 +25,8 @@ export class ProjectModel {
   nodes: AllNodeModels[] = [];
 
   constructor(public doc: Doc<"projects">) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get settings() {
-    return this.doc.settings;
   }
 
   get modelsByTableNameIds() {
