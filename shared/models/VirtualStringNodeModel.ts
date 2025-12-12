@@ -4,47 +4,20 @@ import type { Icon } from "./types";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
 import { VirtualStringNodeSegmentModel } from "./VirtualStringNodeSegmentModel";
+import { exposeDocFields } from "./modelUtils";
+
+export interface VirtualStringNodeModel
+  extends Readonly<NodeDocOfKind<"virtual_string">> {}
 
 export class VirtualStringNodeModel {
   constructor(
     public doc: NodeDocOfKind<"virtual_string">,
     public readonly project?: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this, {
       project: false,
     });
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get order() {
-    return this.doc.order;
-  }
-
-  get parentId() {
-    return this.doc.parentId;
-  }
-
-  get projectId() {
-    return this.doc.projectId;
-  }
-
-  get kind() {
-    return this.doc.kind;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get icon() {
-    return this.doc.icon;
   }
 
   get segments(): VirtualStringNodeSegmentModel[] {

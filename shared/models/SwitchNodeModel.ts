@@ -2,57 +2,17 @@ import { makeAutoObservable } from "mobx";
 import type { Icon } from "./types";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
+import { exposeDocFields } from "./modelUtils";
+
+export interface SwitchNodeModel extends Readonly<NodeDocOfKind<"switch">> {}
 
 export class SwitchNodeModel {
   constructor(
     public doc: NodeDocOfKind<"switch">,
     public readonly project: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get order() {
-    return this.doc.order;
-  }
-
-  get parentId() {
-    return this.doc.parentId;
-  }
-
-  get projectId() {
-    return this.doc.projectId;
-  }
-
-  get kind() {
-    return this.doc.kind;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get icon() {
-    return this.doc.icon;
-  }
-
-  get ipAddress() {
-    return this.doc.ipAddress;
-  }
-
-  get isOn() {
-    return this.doc.isOn;
-  }
-
-  get apiType() {
-    return this.doc.apiType;
   }
 
   setName(name: string) {

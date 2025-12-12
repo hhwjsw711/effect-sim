@@ -3,33 +3,17 @@ import { Doc, Id } from "../../convex/_generated/dataModel";
 import { SequenceModel } from "./sequencer/SequenceModel";
 import { ensure } from "../ensure";
 import { ProjectModel } from "./ProjectModel";
+import { exposeDocFields } from "./modelUtils";
+
+export interface PlaylistModel extends Readonly<Doc<"playlists">> {}
 
 export class PlaylistModel {
   constructor(
     public doc: Doc<"playlists">,
     public readonly project?: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get sequenceIds() {
-    return this.doc.sequenceIds;
-  }
-
-  get projectId() {
-    return this.doc.projectId;
   }
 
   get sequences(): SequenceModel[] {

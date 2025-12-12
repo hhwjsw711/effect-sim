@@ -4,37 +4,21 @@ import type { TrackEvent } from "../../../convex/schema";
 import { ProjectModel } from "../ProjectModel";
 import { TrackModel, TrackData } from "./TrackModel";
 import { createId } from "../types";
+import { exposeDocFields } from "../modelUtils";
+
+export interface SequenceModel extends Readonly<Doc<"sequences">> {}
 
 export class SequenceModel {
   constructor(
     public doc: Doc<"sequences">,
     public readonly project: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get numFrames() {
-    return this.doc.numFrames;
   }
 
   get tracks() {
     return this.doc.tracks.map((track) => new TrackModel(track, this));
-  }
-
-  get projectId() {
-    return this.doc.projectId;
   }
 
   setName(name: string) {

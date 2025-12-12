@@ -1,45 +1,17 @@
 import { makeAutoObservable } from "mobx";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
+import { exposeDocFields } from "./modelUtils";
+
+export interface FolderNodeModel extends Readonly<NodeDocOfKind<"folder">> {}
 
 export class FolderNodeModel {
   constructor(
     public doc: NodeDocOfKind<"folder">,
     public readonly project?: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get order() {
-    return this.doc.order;
-  }
-
-  get parentId() {
-    return this.doc.parentId;
-  }
-
-  get projectId() {
-    return this.doc.projectId;
-  }
-
-  get kind() {
-    return this.doc.kind;
-  }
-
-  get label() {
-    return this.doc.label;
-  }
-
-  get children() {
-    return this.doc.children;
   }
 
   setLabel(label: string) {

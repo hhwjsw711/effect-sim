@@ -3,69 +3,17 @@ import type { PathPoint } from "./types";
 import type { Icon } from "./types";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
+import { exposeDocFields } from "./modelUtils";
+
+export interface StringNodeModel extends Readonly<NodeDocOfKind<"string">> {}
 
 export class StringNodeModel {
   constructor(
     public doc: NodeDocOfKind<"string">,
     public readonly project: ProjectModel,
   ) {
+    exposeDocFields(this);
     makeAutoObservable(this);
-  }
-
-  get _id() {
-    return this.doc._id;
-  }
-
-  get _creationTime() {
-    return this.doc._creationTime;
-  }
-
-  get order() {
-    return this.doc.order;
-  }
-
-  get parentId() {
-    return this.doc.parentId;
-  }
-
-  get projectId() {
-    return this.doc.projectId;
-  }
-
-  get kind() {
-    return this.doc.kind;
-  }
-
-  get name() {
-    return this.doc.name;
-  }
-
-  get icon() {
-    return this.doc.icon;
-  }
-
-  get spacingMeters() {
-    return this.doc.spacingMeters;
-  }
-
-  get ledCount() {
-    return this.doc.ledCount;
-  }
-
-  get ipAddress() {
-    return this.doc.ipAddress;
-  }
-
-  get port() {
-    return this.doc.port;
-  }
-
-  get brightness() {
-    return this.doc.brightness;
-  }
-
-  get pathPoints() {
-    return this.doc.pathPoints;
   }
 
   setName(name: string) {
