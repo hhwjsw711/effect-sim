@@ -5,8 +5,10 @@ import { SequencerContext, useSequencerPanel } from "./SequencerContext";
 import SequencerView from "./layout/SequencerView.tsx";
 import { SequenceRuntime } from "./runtime/SequenceRuntime";
 import { SequencerPanelUIModel } from "./models/SequencerPanelUIModel.ts";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useApp } from "../common/AppContext.tsx";
+import { isTempId } from "../../shared/models/types.ts";
+import { autorun } from "mobx";
 
 export default function SequencerPanel({ id }: { id: string }) {
   const app = useApp();
@@ -14,6 +16,12 @@ export default function SequencerPanel({ id }: { id: string }) {
     () => new SequencerPanelUIModel(app, id),
     [app, id],
   );
+
+  // This is a bit of a hack until we get true client-side document ids
+  // tracking working
+  // useEffect(() => {
+  //   return autorun(() => {});
+  // }, [sequencer.sequence?.sequence]);
 
   return (
     <SequencerContext value={sequencer}>

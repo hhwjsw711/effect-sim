@@ -37,7 +37,7 @@ export default function NoSequenceSelectedContent() {
             project,
           );
           project.addSequence(newSequence);
-          sequencer.setSelectedSequence(newSequence);
+          sequencer.setSelectedSequenceId(newSequence._id);
         }}
       >
         Create Sequence

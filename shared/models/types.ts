@@ -14,6 +14,10 @@ export const createTempId = <T extends TableNames>(tableName: T): Id<T> => {
   return `temp_${tableName}_${Date.now()}` as Id<T>;
 };
 
+export const isTempId = <T extends TableNames>(id: Id<T>): boolean => {
+  return id.startsWith("temp_") as boolean;
+};
+
 export const createId = () =>
   `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 

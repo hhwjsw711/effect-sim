@@ -8,7 +8,7 @@ import { SwitchNodeModel } from "./SwitchNodeModel";
 import { VirtualStringNodeModel } from "./VirtualStringNodeModel";
 import { FolderNodeModel } from "./FolderNodeModel";
 import type { AllNodeModels } from "./types";
-import { createTempId } from "./types";
+import { createTempId, isTempId } from "./types";
 import type { Segment } from "./types";
 import type { PathPoint } from "./types";
 import { ensure } from "../ensure";
@@ -102,6 +102,9 @@ export class ProjectModel {
   }
 
   findSequenceById(id: Id<"sequences">): SequenceModel | null {
+    if (isTempId(id))
+      return this.sequences.find((s) => s.tempId === id) ?? null;
+
     return this.sequences.find((s) => s._id === id) ?? null;
   }
 

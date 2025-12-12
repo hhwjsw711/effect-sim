@@ -1,11 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import type { AppModel } from "../../common/models/AppModel";
 import { SequenceUIModel } from "./SequenceUIModel";
-import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import { Id } from "../../../convex/_generated/dataModel";
+import { makePersistable } from "mobx-persist-store";
 
 export class SequencerPanelUIModel {
-  selectedSequence: SequenceModel | null = null;
+  selectedSequenceId: Id<"sequences"> | null = null;
 
   constructor(
     public readonly app: AppModel,
@@ -13,29 +13,30 @@ export class SequencerPanelUIModel {
   ) {
     makeAutoObservable(this);
 
-    // const persistedData = app.persistedData.sequencers?.[id];
-    // if (persistedData?.selectedSequenceId)
-    //   this.selectedSequence =
-    //     app.project?.findSequenceById(persistedData.selectedSequenceId) ?? null;
+    makePersistable(this, {
+      name: `SequencerPanelUIModel-${id}`,
+      properties: ["selectedSequenceId"],
+      storage: window.localStorage,
+      debugMode: true,
+    });
   }
 
   get sequence() {
-    if (!this.selectedSequence) return null;
-    return new SequenceUIModel(this, this.selectedSequence);
+    if (!this.selectedSequenceId) return null;
+    const sequence = this.app.project?.findSequenceById(
+      this.selectedSequenceId,
+    );
+    if (!sequence) return null;
+    return new SequenceUIModel(this, sequence);
   }
 
-  setSelectedSequence(sequence: SequenceModel | Id<"sequences"> | null) {
-    runInAction(() => {
-      if (typeof sequence === "string")
-        this.selectedSequence =
-          this.app.project?.findSequenceById(sequence) ?? null;
-      else this.selectedSequence = sequence;
-    });
+  setSelectedSequenceId(id: Id<"sequences"> | null) {
+    this.selectedSequenceId = id;
   }
 
   selectFirstSequence() {
     if (!this.app.project) return;
     if (this.app.project.sequences.length === 0) return;
-    this.setSelectedSequence(this.app.project.sequences[0] ?? null);
+    this.selectedSequenceId = this.app.project.sequences[0]._id;
   }
 }

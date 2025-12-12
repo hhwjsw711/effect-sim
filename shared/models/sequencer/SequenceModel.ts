@@ -3,16 +3,19 @@ import { Doc, Id } from "../../../convex/_generated/dataModel";
 import type { TrackEvent } from "../../../convex/schema";
 import { ProjectModel } from "../ProjectModel";
 import { TrackModel, TrackData } from "./TrackModel";
-import { createId } from "../types";
+import { createId, isTempId } from "../types";
 import { exposeDocFields } from "../modelUtils";
 
 export interface SequenceModel extends Readonly<Doc<"sequences">> {}
 
 export class SequenceModel {
+  tempId: Id<"sequences"> | null = null;
+
   constructor(
     public doc: Doc<"sequences">,
     public readonly project: ProjectModel,
   ) {
+    if (isTempId(doc._id)) this.tempId = doc._id;
     makeAutoObservable(this);
     exposeDocFields(this);
   }
