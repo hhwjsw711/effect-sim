@@ -1,5 +1,5 @@
 import { Stack, Text, Group } from "@mantine/core";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { NodesTree } from "./NodesTree";
 import { NodesTreeDeleteAction } from "./NodesTreeDeleteAction";
 import { NodesTreeAddMenu } from "./NodesTreeAddMenu";
@@ -7,8 +7,11 @@ import { useDeleteSelectedNodes } from "./useDeleteSelectedNodes";
 import { isKeyboardEventFromEditable } from "../common/utils/keyboard";
 import { NodesTreeUIModel } from "./models/NodesTreeUIModel";
 import { NodesTreeContext } from "./NodesTreeContext";
+import { useApp } from "../common/AppContext";
 
-export default function NodesTreePanel({ model }: { model: NodesTreeUIModel }) {
+export default function NodesTreePanel({ id }: { id: string }) {
+  const app = useApp();
+  const model = useMemo(() => new NodesTreeUIModel(app, id), [app, id]);
   const { deleteSelectedNodes, hasSelection } = useDeleteSelectedNodes();
   const panelRef = useRef<HTMLDivElement>(null);
 

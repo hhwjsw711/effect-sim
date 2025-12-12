@@ -1,13 +1,13 @@
 import { makeAutoObservable } from "mobx";
 import { StringNodeModel } from "../../../shared/models/StringNodeModel";
 import type { VirtualStringNodeModel } from "../../../shared/models/VirtualStringNodeModel";
-import type { SimulatorModel } from "./SimulatorModel";
+import type { SimulatorUIModel } from "./SimulatorUIModel";
 import { StringUISegmentModel, type Point3D } from "./StringUISegmentModel";
 
 export class StringUIModel {
   constructor(
     public readonly string: StringNodeModel,
-    public readonly simulator: SimulatorModel,
+    public readonly simulator: SimulatorUIModel,
   ) {
     makeAutoObservable(this, {
       string: false,

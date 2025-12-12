@@ -3,22 +3,16 @@ import type * as THREE from "three";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { ProjectModel } from "../../../shared/models/ProjectModel";
 import { exhaustiveCheck } from "../../../shared/misc";
-import {
-  AllNodeModels,
-  createTempId,
-  createId,
-} from "../../../shared/models/types";
+import { AllNodeModels } from "../../../shared/models/types";
 import { VirtualStringNodeModel } from "../../../shared/models/VirtualStringNodeModel";
 import { StringNodeModel } from "../../../shared/models/StringNodeModel";
-import { SimulatorModel } from "../../simulator/models/SimulatorModel";
-import { SequencerPanelUIModel } from "../../sequencer/models/SequencerPanelUIModel";
+import { SimulatorUIModel } from "../../simulator/models/SimulatorUIModel";
 import type { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import type { TrackModel } from "../../../shared/models/sequencer/TrackModel";
 import type { AllTrackEventModels } from "../../../shared/models/sequencer";
 import type { PlaylistModel } from "../../../shared/models/PlaylistModel";
 import { HardwareInterfaceRuntimeModel } from "./HardwareInterfaceRuntimeModel";
 import { FlexLayoutModel } from "./FlexLayoutModel";
-import { NodesTreeUIModel } from "../../nodesTree/models/NodesTreeUIModel";
 
 export type SelectedEntity =
   | { kind: "node"; node: AllNodeModels }
@@ -40,43 +34,19 @@ export class AppModel {
   isMeasureMode = false;
   placingStringId: Id<"nodes"> | null = null;
   selectedEntity: SelectedEntity = null;
-  simulators: SimulatorModel[] = [];
   gardenModel: THREE.Object3D | null = null;
   projects: ProjectModel[] = [];
   hardwareInterfaceRuntime: HardwareInterfaceRuntimeModel;
-  flex: FlexLayoutModel;
+  layout: FlexLayoutModel;
 
   constructor(readonly persistedData: Partial<AppPersistedData> = {}) {
     this.hardwareInterfaceRuntime = new HardwareInterfaceRuntimeModel(this);
-    this.flex = new FlexLayoutModel(this);
+    this.layout = new FlexLayoutModel(this);
     makeAutoObservable(this, {
       gardenModel: observable.ref,
       persistedData: false,
     });
     this.currentProjectId = persistedData.app?.currentProjectId ?? null;
-  }
-
-  get sequencers() {
-    const sequencers = this.flex.nodesByComponent.get("sequencer") ?? [];
-    return sequencers.map(
-      (sequencer) =>
-        new SequencerPanelUIModel(this, sequencer.id ?? createId()),
-    );
-  }
-
-  findSequencerById(id: string) {
-    return this.sequencers.find((sequencer) => sequencer.id === id);
-  }
-
-  get nodesTrees() {
-    const sequencers = this.flex.nodesByComponent.get("nodes") ?? [];
-    return sequencers.map(
-      (sequencer) => new NodesTreeUIModel(this, sequencer.id ?? createId()),
-    );
-  }
-
-  findNodesTreeById(id: string) {
-    return this.nodesTrees.find((nodesTree) => nodesTree.id === id);
   }
 
   get persistableData() {
@@ -88,45 +58,9 @@ export class AppModel {
         autoconnect: this.hardwareInterfaceRuntime.autoconnect,
       },
       flex: {
-        model: this.flex.modelJson,
+        model: this.layout.modelJson,
       },
-      sequencers: this.sequencers.reduce(
-        (acc, sequencer) => {
-          acc[sequencer.id] = {
-            selectedSequenceId: sequencer.selectedSequence?._id ?? null,
-          };
-          return acc;
-        },
-        {} as Record<string, { selectedSequenceId: Id<"sequences"> | null }>,
-      ),
-      nodesTrees: this.nodesTrees.reduce(
-        (acc, nodesTree) => {
-          acc[nodesTree.id] = {
-            expandedItems: nodesTree.expandedItems,
-          };
-          return acc;
-        },
-        {} as Record<string, { expandedItems: string[] }>,
-      ),
     };
-  }
-
-  addSimulator(simulator: SimulatorModel) {
-    this.simulators.push(simulator);
-  }
-
-  removeSimulator(simulator: SimulatorModel) {
-    const index = this.simulators.indexOf(simulator);
-    if (index !== -1) this.simulators.splice(index, 1);
-  }
-
-  addSequencer(sequencer: SequencerPanelUIModel) {
-    this.sequencers.push(sequencer);
-  }
-
-  removeSequencer(sequencer: SequencerPanelUIModel) {
-    const index = this.sequencers.indexOf(sequencer);
-    if (index !== -1) this.sequencers.splice(index, 1);
   }
 
   get project(): ProjectModel | null {

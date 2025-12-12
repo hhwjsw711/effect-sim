@@ -35,8 +35,8 @@ export class NodesTreeUIModel {
       app: false,
     });
 
-    const persistedData = app.persistedData.nodesTrees?.[id];
-    this.expandedItems = persistedData?.expandedItems ?? [];
+    // const persistedData = app.persistedData.nodesTrees?.[id];
+    // this.expandedItems = persistedData?.expandedItems ?? [];
   }
 
   get project() {

@@ -83,12 +83,12 @@ export default function MenuBar() {
                 </Text>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item onClick={() => app.flex.resetLayout()}>
+                <Menu.Item onClick={() => app.layout.resetLayout()}>
                   Reset Layout
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => {
-                    const json = app.flex.model.toJson();
+                    const json = app.layout.model.toJson();
                     navigator.clipboard.writeText(JSON.stringify(json));
                     notifications.show({
                       title: "Layout copied to clipboard",
@@ -100,13 +100,13 @@ export default function MenuBar() {
                   Copy Layout
                 </Menu.Item>
                 <Divider my="sm" />
-                <Menu.Item onClick={() => app.flex.showInspector()}>
+                <Menu.Item onClick={() => app.layout.showInspector()}>
                   Show Inspector
                 </Menu.Item>
-                <Menu.Item onClick={() => app.flex.showSequencer()}>
+                <Menu.Item onClick={() => app.layout.showSequencer()}>
                   Show Sequencer
                 </Menu.Item>
-                <Menu.Item onClick={() => app.flex.showPlaylists()}>
+                <Menu.Item onClick={() => app.layout.showPlaylists()}>
                   Show Playlists
                 </Menu.Item>
                 <Divider my="sm" />

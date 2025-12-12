@@ -21,7 +21,7 @@ export function NodesTreeAddMenu() {
               port: 4048,
             });
             app.setSelectedEntity({ kind: "node", node });
-            app.flex.showInspector();
+            app.layout.showInspector();
           }}
         >
           Add String
@@ -34,7 +34,7 @@ export function NodesTreeAddMenu() {
               node,
               selectedSegmentIndex: null,
             });
-            app.flex.showInspector();
+            app.layout.showInspector();
           }}
         >
           Add Virtual String
@@ -52,7 +52,7 @@ export function NodesTreeAddMenu() {
           onClick={() => {
             const node = project.createSwitchNode();
             app.setSelectedEntity({ kind: "node", node });
-            app.flex.showInspector();
+            app.layout.showInspector();
           }}
         >
           Add Switch

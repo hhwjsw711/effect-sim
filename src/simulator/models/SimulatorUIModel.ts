@@ -2,8 +2,11 @@ import { makeAutoObservable } from "mobx";
 import { AppModel } from "../../common/models/AppModel";
 import { StringUIModel } from "./StringUIModel";
 
-export class SimulatorModel {
-  constructor(public readonly app: AppModel) {
+export class SimulatorUIModel {
+  constructor(
+    public readonly app: AppModel,
+    public readonly id: string,
+  ) {
     makeAutoObservable(this, {
       app: false,
     });
@@ -24,7 +27,7 @@ export class SimulatorModel {
 
     const stringNode = project.strings.find((s) => s._id === placingId);
     if (!stringNode) return null;
-    
+
     return new StringUIModel(stringNode, this);
   }
 

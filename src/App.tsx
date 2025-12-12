@@ -1,6 +1,5 @@
 import { Notifications } from "@mantine/notifications";
 import { LedDataDispatcher } from "./data/LedDataDispatcher";
-import { SimulatorProvider } from "./simulator/SimulatorProvider.tsx";
 import type { TabNode } from "flexlayout-react";
 import { Layout } from "flexlayout-react";
 import MenuBar from "./common/MenuBar";
@@ -13,6 +12,7 @@ import { HardwareInterfaceRuntimeAutoconnector } from "./common/hardware-interfa
 import { StringSegmentRangeInstantIndicator } from "./inspector/virtualString/StringSegmentRangeInstantIndicator.tsx";
 import SequencerPanel from "./sequencer/SequencerPanel.tsx";
 import NodesTreePanel from "./nodesTree/NodesTreePanel.tsx";
+import SimulatorPanel from "./simulator/SimulatorPanel.tsx";
 
 export default function App() {
   const app = useApp();
@@ -38,23 +38,18 @@ export default function App() {
           <MenuBar />
           <div style={{ flex: 1, minHeight: 0, position: "relative" }}>
             <Layout
-              model={app.flex.model}
-              onModelChange={(model) => app.flex.setModel(model)}
+              model={app.layout.model}
+              onModelChange={(model) => app.layout.setModel(model)}
               factory={(node: TabNode) => {
                 const component = node.getComponent();
-                if (component === "simulator") return <SimulatorProvider />;
-                if (component === "nodes") {
-                  const model = app.findNodesTreeById(node.getId());
-                  if (!model) return null;
-                  return <NodesTreePanel model={model} />;
-                }
+                if (component === "simulator")
+                  return <SimulatorPanel id={node.getId()} />;
+                if (component === "nodes")
+                  return <NodesTreePanel id={node.getId()} />;
                 if (component === "playlists") return <PlaylistsPanel />;
                 if (component === "inspector") return <InspectorPanel />;
-                if (component === "sequencer") {
-                  const model = app.findSequencerById(node.getId());
-                  if (!model) return null;
-                  return <SequencerPanel sequencer={model} />;
-                }
+                if (component === "sequencer")
+                  return <SequencerPanel id={node.getId()} />;
 
                 return null;
               }}

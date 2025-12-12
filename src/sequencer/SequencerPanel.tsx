@@ -5,12 +5,16 @@ import { SequencerContext, useSequencerPanel } from "./SequencerContext";
 import SequencerView from "./layout/SequencerView.tsx";
 import { SequenceRuntime } from "./runtime/SequenceRuntime";
 import { SequencerPanelUIModel } from "./models/SequencerPanelUIModel.ts";
+import { useMemo } from "react";
+import { useApp } from "../common/AppContext.tsx";
 
-export default function SequencerPanel({
-  sequencer,
-}: {
-  sequencer: SequencerPanelUIModel;
-}) {
+export default function SequencerPanel({ id }: { id: string }) {
+  const app = useApp();
+  const sequencer = useMemo(
+    () => new SequencerPanelUIModel(app, id),
+    [app, id],
+  );
+
   return (
     <SequencerContext value={sequencer}>
       <Stack

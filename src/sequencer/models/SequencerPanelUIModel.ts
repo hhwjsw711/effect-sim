@@ -13,10 +13,10 @@ export class SequencerPanelUIModel {
   ) {
     makeAutoObservable(this);
 
-    const persistedData = app.persistedData.sequencers?.[id];
-    if (persistedData?.selectedSequenceId)
-      this.selectedSequence =
-        app.project?.findSequenceById(persistedData.selectedSequenceId) ?? null;
+    // const persistedData = app.persistedData.sequencers?.[id];
+    // if (persistedData?.selectedSequenceId)
+    //   this.selectedSequence =
+    //     app.project?.findSequenceById(persistedData.selectedSequenceId) ?? null;
   }
 
   get sequence() {
