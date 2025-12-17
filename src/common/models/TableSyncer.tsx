@@ -7,6 +7,8 @@ import { reaction, runInAction, toJS } from "mobx";
 import { diffTable } from "./sync/snapshotDiff";
 import { reconcileArray } from "./sync/reconcile";
 import { equals } from "ramda";
+import { usePersistedQuery } from "../hooks/usePersistedQuery";
+import { FunctionReference, FunctionReturnType } from "convex/server";
 
 interface SyncableModel<TTableName extends TableNames> {
   _id: Id<TTableName>;
@@ -15,19 +17,33 @@ interface SyncableModel<TTableName extends TableNames> {
 
 const syncDebounceMs = 500;
 
-export const TableSyncer = <TTableName extends TableNames>({
+type QueryReturningDocs<TTableName extends TableNames> = FunctionReference<
+  "query",
+  "public",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any,
+  Doc<TTableName>[]
+>;
+
+export const TableSyncer = <
+  TTableName extends TableNames,
+  TQuery extends QueryReturningDocs<TTableName>,
+>({
   table,
   models,
-  serverValues,
+  query,
+  queryArgs,
   createModel,
-  isStale = false,
 }: {
   table: TTableName;
   models: SyncableModel<TTableName>[];
-  serverValues?: Doc<TTableName>[];
-  createModel?: (doc: Doc<TTableName>) => SyncableModel<TTableName>;
-  isStale?: boolean;
+  query: TQuery;
+  queryArgs: TQuery extends FunctionReference<"query", "public", infer Args>
+    ? Args
+    : never;
+  createModel: (doc: Doc<TTableName>) => SyncableModel<TTableName>;
 }) => {
+  const { data: serverValues, isStale } = usePersistedQuery(query, queryArgs);
   const applyOperations = useMutation(api.functions.applyOperations);
   const onApiError = useApiErrorHandler();
 
@@ -44,7 +60,7 @@ export const TableSyncer = <TTableName extends TableNames>({
 
   // Reconcile with server values if provided
   useEffect(() => {
-    if (!serverValues || !createModel) return;
+    if (!serverValues) return;
 
     // If server values are same as last known snapshot, ignore
     // (Use deep comparison or just check if we already processed this update)

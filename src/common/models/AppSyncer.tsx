@@ -10,7 +10,8 @@ import { usePersistedQuery } from "../hooks/usePersistedQuery";
 export const AppSyncer = ({ children }: { children: ReactNode }) => {
   const app = useApp();
 
-  const { data: projects, isStale } = usePersistedQuery(api.functions.listProjects);
+  // We still need this query here for the loading state check
+  const { data: projects } = usePersistedQuery(api.functions.listProjects);
 
   const hasDataBeenLoaded = projects != undefined;
 
@@ -34,15 +35,13 @@ export const AppSyncer = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {hasDataBeenLoaded ? (
-        <TableSyncer
-          table="projects"
-          models={app.projects}
-          serverValues={projects}
-          createModel={(doc) => new ProjectModel(doc)}
-          isStale={isStale}
-        />
-      ) : null}
+      <TableSyncer
+        table="projects"
+        models={app.projects}
+        query={api.functions.listProjects}
+        queryArgs={{}}
+        createModel={(doc) => new ProjectModel(doc)}
+      />
       {app.project ? (
         <ProjectSyncer key={app.project._id} project={app.project} />
       ) : null}

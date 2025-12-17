@@ -3,52 +3,30 @@ import { api } from "../../../convex/_generated/api";
 import { TableSyncer } from "./TableSyncer";
 import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
 import { PlaylistModel } from "../../../shared/models/PlaylistModel";
-import { usePersistedQuery } from "../hooks/usePersistedQuery";
 
 export const ProjectSyncer = ({ project }: { project: ProjectModel }) => {
-  const { data: nodes, isStale: isNodesStale } = usePersistedQuery(
-    api.functions.listNodesForProject,
-    {
-      projectId: project._id,
-    },
-  );
-
-  const { data: sequences, isStale: isSequencesStale } = usePersistedQuery(
-    api.functions.listSequencesForProject,
-    {
-      projectId: project._id,
-    },
-  );
-
-  const { data: playlists, isStale: isPlaylistsStale } = usePersistedQuery(
-    api.functions.listPlaylistsForProject,
-    {
-      projectId: project._id,
-    },
-  );
-
   return (
     <>
       <TableSyncer
         table="nodes"
         models={project.nodes}
-        serverValues={nodes}
+        query={api.functions.listNodesForProject}
+        queryArgs={{ projectId: project._id }}
         createModel={(doc) => project.createNodeModel(doc)}
-        isStale={isNodesStale}
       />
       <TableSyncer
         table="sequences"
         models={project.sequences}
-        serverValues={sequences}
+        query={api.functions.listSequencesForProject}
+        queryArgs={{ projectId: project._id }}
         createModel={(doc) => new SequenceModel(doc, project)}
-        isStale={isSequencesStale}
       />
       <TableSyncer
         table="playlists"
         models={project.playlists}
-        serverValues={playlists}
+        query={api.functions.listPlaylistsForProject}
+        queryArgs={{ projectId: project._id }}
         createModel={(doc) => new PlaylistModel(doc, project)}
-        isStale={isPlaylistsStale}
       />
     </>
   );
