@@ -1,18 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useMemo } from "react";
-import { AppModel, type SelectedEntity } from "./models/AppModel";
+import { createContext, useContext, useMemo } from "react";
+import { AppModel } from "./models/AppModel";
 
 const AppContext = createContext<AppModel | null>(null);
 
-const persistKey = "app-data";
-
 export function AppProvider({ children }: { children: ReactNode }) {
-  const appModel = useMemo(() => {
-    const persistedData = localStorage.getItem(persistKey);
-    return new AppModel();
-  }, []);
-
+  const appModel = useMemo(() => new AppModel(), []);
   return <AppContext.Provider value={appModel}>{children}</AppContext.Provider>;
 }
 
