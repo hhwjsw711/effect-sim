@@ -1,9 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
-import { exposeDocFields } from "./modelUtils";
+import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
-export interface FolderNodeModel extends NodeDocOfKind<"folder"> {}
+export interface FolderNodeModel
+  extends WithAutoSetters<NodeDocOfKind<"folder">> {}
 
 export class FolderNodeModel {
   constructor(
@@ -14,12 +15,8 @@ export class FolderNodeModel {
     exposeDocFields(this);
   }
 
-  setLabel(label: string) {
-    this.label = label;
-  }
-
   update({ label }: { label?: string }) {
-    if (label !== undefined) this.label = label;
+    if (label !== undefined) this.setLabel(label);
   }
 
   remove() {

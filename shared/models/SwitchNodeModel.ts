@@ -2,9 +2,10 @@ import { makeAutoObservable } from "mobx";
 import type { Icon } from "./types";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
-import { exposeDocFields } from "./modelUtils";
+import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
-export interface SwitchNodeModel extends NodeDocOfKind<"switch"> {}
+export interface SwitchNodeModel
+  extends WithAutoSetters<NodeDocOfKind<"switch">> {}
 
 export class SwitchNodeModel {
   constructor(
@@ -15,24 +16,9 @@ export class SwitchNodeModel {
     exposeDocFields(this);
   }
 
-  setName(name: string) {
-    this.name = name;
-  }
-
-  setIcon(icon: Icon) {
-    this.icon = icon;
-  }
-
-  setIpAddress(ipAddress: string) {
-    this.ipAddress = ipAddress;
-  }
-
-  setApiType(apiType: "athom_type1" | "athom_type2") {
-    this.apiType = apiType;
-  }
-
+  // Alias for setIsOn since "status" is more intuitive
   setStatus(isOn: boolean | null) {
-    this.isOn = isOn;
+    this.setIsOn(isOn);
   }
 
   update({
@@ -46,10 +32,10 @@ export class SwitchNodeModel {
     ipAddress?: string;
     apiType?: "athom_type1" | "athom_type2";
   }) {
-    if (name !== undefined) this.name = name;
-    if (icon !== undefined) this.icon = icon;
-    if (ipAddress !== undefined) this.ipAddress = ipAddress;
-    if (apiType !== undefined) this.apiType = apiType;
+    if (name !== undefined) this.setName(name);
+    if (icon !== undefined) this.setIcon(icon);
+    if (ipAddress !== undefined) this.setIpAddress(ipAddress);
+    if (apiType !== undefined) this.setApiType(apiType);
   }
 
   remove() {

@@ -1,11 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { SequenceModel } from "./sequencer/SequenceModel";
-import { ensure } from "../ensure";
 import { ProjectModel } from "./ProjectModel";
-import { exposeDocFields } from "./modelUtils";
+import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
-export interface PlaylistModel extends Doc<"playlists"> {}
+export interface PlaylistModel extends WithAutoSetters<Doc<"playlists">> {}
 
 export class PlaylistModel {
   constructor(
@@ -35,10 +34,6 @@ export class PlaylistModel {
       (seq) =>
         seq.projectId === this.projectId && !this.sequenceIds.includes(seq._id),
     );
-  }
-
-  setName(name: string) {
-    this.name = name;
   }
 
   remove() {

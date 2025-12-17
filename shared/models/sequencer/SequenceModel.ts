@@ -3,10 +3,10 @@ import { Doc, Id } from "../../../convex/_generated/dataModel";
 import type { TrackEvent } from "../../../convex/schema";
 import { ProjectModel } from "../ProjectModel";
 import { TrackModel, TrackData } from "./TrackModel";
-import { createId, isTempId } from "../types";
-import { exposeDocFields } from "../modelUtils";
+import { createId } from "../types";
+import { exposeDocFields, WithAutoSetters } from "../modelUtils";
 
-export interface SequenceModel extends Doc<"sequences"> {}
+export interface SequenceModel extends WithAutoSetters<Doc<"sequences">> {}
 
 export class SequenceModel {
   constructor(
@@ -21,14 +21,6 @@ export class SequenceModel {
     return this.tracks.map((track) => new TrackModel(track, this));
   }
 
-  setName(name: string) {
-    this.name = name;
-  }
-
-  setNumFrames(numFrames: number) {
-    this.numFrames = numFrames;
-  }
-
   update({
     name,
     numFrames,
@@ -38,9 +30,9 @@ export class SequenceModel {
     numFrames?: number;
     tracks?: TrackData[];
   }) {
-    if (name !== undefined) this.name = name;
-    if (numFrames !== undefined) this.numFrames = numFrames;
-    if (tracks !== undefined) this.tracks = tracks;
+    if (name !== undefined) this.setName(name);
+    if (numFrames !== undefined) this.setNumFrames(numFrames);
+    if (tracks !== undefined) this.setTracks(tracks);
   }
 
   remove() {

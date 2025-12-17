@@ -1,13 +1,12 @@
 import { makeAutoObservable } from "mobx";
-import type { Segment } from "./types";
-import type { Icon } from "./types";
+import type { Segment, Icon } from "./types";
 import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
 import { VirtualStringNodeSegmentModel } from "./VirtualStringNodeSegmentModel";
-import { exposeDocFields } from "./modelUtils";
+import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
 export interface VirtualStringNodeModel
-  extends NodeDocOfKind<"virtual_string"> {}
+  extends WithAutoSetters<NodeDocOfKind<"virtual_string">> {}
 
 export class VirtualStringNodeModel {
   constructor(
@@ -34,18 +33,6 @@ export class VirtualStringNodeModel {
     );
   }
 
-  setName(name: string) {
-    this.name = name;
-  }
-
-  setIcon(icon: Icon) {
-    this.icon = icon;
-  }
-
-  setSegments(segments: Segment[]) {
-    this.segments = segments;
-  }
-
   update({
     name,
     icon,
@@ -55,9 +42,9 @@ export class VirtualStringNodeModel {
     icon?: Icon;
     segments?: Segment[];
   }) {
-    if (name !== undefined) this.name = name;
-    if (icon !== undefined) this.icon = icon;
-    if (segments !== undefined) this.segments = segments;
+    if (name !== undefined) this.setName(name);
+    if (icon !== undefined) this.setIcon(icon);
+    if (segments !== undefined) this.setSegments(segments);
   }
 
   remove() {

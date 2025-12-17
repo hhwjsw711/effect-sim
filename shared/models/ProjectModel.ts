@@ -8,16 +8,16 @@ import { SwitchNodeModel } from "./SwitchNodeModel";
 import { VirtualStringNodeModel } from "./VirtualStringNodeModel";
 import { FolderNodeModel } from "./FolderNodeModel";
 import type { AllNodeModels } from "./types";
-import { createTempId, isTempId } from "./types";
+import { createTempId } from "./types";
 import type { Segment } from "./types";
 import type { PathPoint } from "./types";
 import { ensure } from "../ensure";
 import { ProjectData } from "../../convex/model";
 import { exhaustiveCheck } from "../misc";
-import { exposeDocFields } from "./modelUtils";
+import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
 // Interface merging - tells TypeScript that ProjectModel has all the doc fields
-export interface ProjectModel extends Doc<"projects"> {}
+export interface ProjectModel extends WithAutoSetters<Doc<"projects">> {}
 
 export class ProjectModel {
   playlists: PlaylistModel[] = [];
@@ -103,10 +103,6 @@ export class ProjectModel {
 
   findSequenceById(id: Id<"sequences">): SequenceModel | null {
     return this.sequences.find((s) => s._id === id) ?? null;
-  }
-
-  setName(name: string) {
-    this.name = name;
   }
 
   updateSettings(settings: {
@@ -211,8 +207,8 @@ export class ProjectModel {
       if (!node) continue;
 
       // All node models have these properties
-      if (patch.parentId !== undefined) node.parentId = patch.parentId;
-      if (patch.order !== undefined) node.order = patch.order;
+      if (patch.parentId !== undefined) node.setParentId(patch.parentId);
+      if (patch.order !== undefined) node.setOrder(patch.order);
     }
   }
 
