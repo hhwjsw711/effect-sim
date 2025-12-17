@@ -28,7 +28,7 @@ export const TableSyncer = <TTableName extends TableNames>({
   createModel?: (doc: Doc<TTableName>) => SyncableModel<TTableName>;
   isStale?: boolean;
 }) => {
-  const applyOperations = useMutation(api.model.applyOperations);
+  const applyOperations = useMutation(api.functions.applyOperations);
   const onApiError = useApiErrorHandler();
 
   const lastServerSnapshotRef = useRef<Array<Doc<TTableName>>>([]);

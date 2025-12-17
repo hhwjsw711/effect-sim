@@ -5,12 +5,12 @@ import { ProjectModel } from "../shared/models/ProjectModel";
 import { HWIRAppModel } from "./models/HWIRAppModel";
 
 export const useProjectModel = (model: HWIRAppModel) => {
-  const projectDoc = useQuery(api.model.getProject, {
+  const projectDoc = useQuery(api.functions.getProject, {
     projectId: model.startupSettings.projectId,
   });
 
   const projectData = useQuery(
-    api.model.getDataForProject,
+    api.functions.getDataForProject,
     projectDoc
       ? {
           projectId: projectDoc?._id,

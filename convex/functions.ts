@@ -92,19 +92,6 @@ export const listNodesForProject = query({
       .collect(),
 });
 
-export const listStringsForProject = query({
-  args: {
-    projectId: v.id("projects"),
-  },
-  handler: async (ctx, { projectId }) =>
-    ctx.db
-      .query("nodes")
-      .withIndex("by_kind_project", (q) =>
-        q.eq("kind", "string").eq("projectId", projectId),
-      )
-      .collect(),
-});
-
 export const listProjects = query({
   handler: async (ctx) => ctx.db.query("projects").collect(),
 });
@@ -117,13 +104,6 @@ export const getProject = query({
     ctx.db
       .get(projectId)
       .then(ensureFP(`Project not found with id '${projectId}'`)),
-});
-
-export const getAppData = query({
-  handler: async (ctx) => {
-    const projects = await ctx.db.query("projects").collect();
-    return { projects };
-  },
 });
 
 export const getDataForProject = query({
@@ -151,5 +131,5 @@ export const getDataForProject = query({
 });
 
 export type ProjectData = FunctionReturnType<
-  typeof api.model.getDataForProject
+  typeof api.functions.getDataForProject
 >;

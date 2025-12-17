@@ -7,21 +7,21 @@ import { usePersistedQuery } from "../hooks/usePersistedQuery";
 
 export const ProjectSyncer = ({ project }: { project: ProjectModel }) => {
   const { data: nodes, isStale: isNodesStale } = usePersistedQuery(
-    api.model.listNodesForProject,
+    api.functions.listNodesForProject,
     {
       projectId: project._id,
     },
   );
 
   const { data: sequences, isStale: isSequencesStale } = usePersistedQuery(
-    api.model.listSequencesForProject,
+    api.functions.listSequencesForProject,
     {
       projectId: project._id,
     },
   );
 
   const { data: playlists, isStale: isPlaylistsStale } = usePersistedQuery(
-    api.model.listPlaylistsForProject,
+    api.functions.listPlaylistsForProject,
     {
       projectId: project._id,
     },

@@ -18,7 +18,7 @@ export const runSetupCLI = async (convexUrl: string) => {
 
   const projectId: Id<"projects"> = await iife(async () => {
     if (options.project) return options.project as Id<"projects">;
-    const projects = await client.query(api.model.listProjects, {});
+    const projects = await client.query(api.functions.listProjects, {});
     if (projects.length === 0) {
       logger.error("No projects found.");
       process.exit(1);
@@ -36,9 +36,12 @@ export const runSetupCLI = async (convexUrl: string) => {
   const playlistId = await iife(async () => {
     if (options.playlist === "null") return null;
     if (options.playlist) return options.playlist as Id<"playlists">;
-    const playlists = await client.query(api.model.listPlaylistsForProject, {
-      projectId: projectId as Id<"projects">,
-    });
+    const playlists = await client.query(
+      api.functions.listPlaylistsForProject,
+      {
+        projectId: projectId as Id<"projects">,
+      },
+    );
     if (playlists.length === 0) {
       logger.error("No playlists found.");
       process.exit(1);

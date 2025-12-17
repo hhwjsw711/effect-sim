@@ -1,6 +1,6 @@
 import { omit } from "../../../../shared/misc";
 import { Id, TableNames, Doc } from "../../../../convex/_generated/dataModel";
-import { Operation } from "../../../../convex/model";
+import { Operation } from "../../../../convex/functions";
 
 // Generic function to diff two arrays of documents for a single table
 export const diffTable = <T extends TableNames>(

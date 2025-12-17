@@ -8,7 +8,7 @@
  * @module
  */
 
-import type * as model from "../model.js";
+import type * as functions from "../functions.js";
 
 import type {
   ApiFromModules,
@@ -25,7 +25,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  model: typeof model;
+  functions: typeof functions;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

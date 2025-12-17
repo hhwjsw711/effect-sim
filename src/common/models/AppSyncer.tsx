@@ -10,7 +10,7 @@ import { usePersistedQuery } from "../hooks/usePersistedQuery";
 export const AppSyncer = ({ children }: { children: ReactNode }) => {
   const app = useApp();
 
-  const { data: projects, isStale } = usePersistedQuery(api.model.listProjects);
+  const { data: projects, isStale } = usePersistedQuery(api.functions.listProjects);
 
   const hasDataBeenLoaded = projects != undefined;
 

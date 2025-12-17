@@ -12,7 +12,7 @@ import { createTempId } from "./types";
 import type { Segment } from "./types";
 import type { PathPoint } from "./types";
 import { ensure } from "../ensure";
-import { ProjectData } from "../../convex/model";
+import { ProjectData } from "../../convex/functions";
 import { exhaustiveCheck } from "../misc";
 import { exposeDocFields, WithAutoSetters } from "./modelUtils";
 
