@@ -48,7 +48,6 @@ export class AppModel {
       name: "AppModel",
       properties: ["currentProjectId"],
       storage: window.localStorage,
-      debugMode: true,
     });
   }
 

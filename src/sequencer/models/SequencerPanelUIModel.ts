@@ -17,7 +17,6 @@ export class SequencerPanelUIModel {
       name: `SequencerPanelUIModel-${id}`,
       properties: ["selectedSequenceId"],
       storage: window.localStorage,
-      debugMode: true,
     });
   }
 

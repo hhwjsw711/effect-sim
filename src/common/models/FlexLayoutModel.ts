@@ -28,7 +28,6 @@ export class FlexLayoutModel {
       name: "FlexLayoutModel",
       properties: ["modelJson"],
       storage: window.localStorage,
-      debugMode: true,
     }).then((store) => {
       this.setModel(Model.fromJson(this.modelJson ?? defaultLayoutJson));
     });

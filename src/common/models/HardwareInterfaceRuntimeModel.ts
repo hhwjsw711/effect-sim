@@ -33,7 +33,6 @@ export class HardwareInterfaceRuntimeModel {
       name: "HardwareInterfaceRuntimeModel",
       properties: ["shouldAutoConnect"],
       storage: window.localStorage,
-      debugMode: true,
     });
   }
 
