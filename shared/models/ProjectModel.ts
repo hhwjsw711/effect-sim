@@ -17,7 +17,7 @@ import { exhaustiveCheck } from "../misc";
 import { exposeDocFields } from "./modelUtils";
 
 // Interface merging - tells TypeScript that ProjectModel has all the doc fields
-export interface ProjectModel extends Readonly<Doc<"projects">> {}
+export interface ProjectModel extends Doc<"projects"> {}
 
 export class ProjectModel {
   playlists: PlaylistModel[] = [];
@@ -106,7 +106,7 @@ export class ProjectModel {
   }
 
   setName(name: string) {
-    this.doc.name = name;
+    this.name = name;
   }
 
   updateSettings(settings: {

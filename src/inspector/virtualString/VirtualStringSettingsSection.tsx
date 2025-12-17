@@ -13,7 +13,7 @@ export default function VirtualStringSettingsSection({
   const project = appModel.getProject();
 
   const allStrings = project.stringDocs;
-  const segmentModels = node.segments;
+  const segmentModels = node.segmentModels;
 
   return (
     <Stack gap="md" p="md">
@@ -59,7 +59,7 @@ export default function VirtualStringSettingsSection({
             const firstString = allStrings[0];
             if (!firstString) return;
             const newSegments = [
-              ...node.doc.segments,
+              ...node.segments,
               {
                 nodeId: firstString._id,
                 fromIndex: 0,

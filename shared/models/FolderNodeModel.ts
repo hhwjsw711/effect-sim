@@ -3,7 +3,7 @@ import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
 import { exposeDocFields } from "./modelUtils";
 
-export interface FolderNodeModel extends Readonly<NodeDocOfKind<"folder">> {}
+export interface FolderNodeModel extends NodeDocOfKind<"folder"> {}
 
 export class FolderNodeModel {
   constructor(
@@ -15,11 +15,11 @@ export class FolderNodeModel {
   }
 
   setLabel(label: string) {
-    this.doc.label = label;
+    this.label = label;
   }
 
   update({ label }: { label?: string }) {
-    if (label !== undefined) this.doc.label = label;
+    if (label !== undefined) this.label = label;
   }
 
   remove() {

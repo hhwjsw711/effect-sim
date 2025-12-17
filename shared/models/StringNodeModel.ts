@@ -5,7 +5,7 @@ import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
 import { exposeDocFields } from "./modelUtils";
 
-export interface StringNodeModel extends Readonly<NodeDocOfKind<"string">> {}
+export interface StringNodeModel extends NodeDocOfKind<"string"> {}
 
 export class StringNodeModel {
   constructor(
@@ -17,35 +17,35 @@ export class StringNodeModel {
   }
 
   setName(name: string) {
-    this.doc.name = name;
+    this.name = name;
   }
 
   setIcon(icon: Icon) {
-    this.doc.icon = icon;
+    this.icon = icon;
   }
 
   setSpacingMeters(spacingMeters: number) {
-    this.doc.spacingMeters = spacingMeters;
+    this.spacingMeters = spacingMeters;
   }
 
   setLedCount(ledCount: number) {
-    this.doc.ledCount = ledCount;
+    this.ledCount = ledCount;
   }
 
   setIpAddress(ipAddress: string) {
-    this.doc.ipAddress = ipAddress;
+    this.ipAddress = ipAddress;
   }
 
   setPort(port: number) {
-    this.doc.port = port;
+    this.port = port;
   }
 
   setBrightness(brightness: number) {
-    this.doc.brightness = brightness;
+    this.brightness = brightness;
   }
 
   setPathPoints(pathPoints: PathPoint[]) {
-    this.doc.pathPoints = pathPoints;
+    this.pathPoints = pathPoints;
   }
 
   update({
@@ -67,15 +67,14 @@ export class StringNodeModel {
     brightness?: number;
     pathPoints?: PathPoint[];
   }) {
-    const doc = this.doc;
-    if (name !== undefined) doc.name = name;
-    if (icon !== undefined) doc.icon = icon;
-    if (spacingMeters !== undefined) doc.spacingMeters = spacingMeters;
-    if (ledCount !== undefined) doc.ledCount = ledCount;
-    if (ipAddress !== undefined) doc.ipAddress = ipAddress;
-    if (port !== undefined) doc.port = port;
-    if (brightness !== undefined) doc.brightness = brightness;
-    if (pathPoints !== undefined) doc.pathPoints = pathPoints;
+    if (name !== undefined) this.name = name;
+    if (icon !== undefined) this.icon = icon;
+    if (spacingMeters !== undefined) this.spacingMeters = spacingMeters;
+    if (ledCount !== undefined) this.ledCount = ledCount;
+    if (ipAddress !== undefined) this.ipAddress = ipAddress;
+    if (port !== undefined) this.port = port;
+    if (brightness !== undefined) this.brightness = brightness;
+    if (pathPoints !== undefined) this.pathPoints = pathPoints;
   }
 
   remove() {

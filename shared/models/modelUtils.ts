@@ -1,5 +1,5 @@
 /**
- * Exposes all fields from `model.doc` as getters on the model instance.
+ * Exposes all fields from `model.doc` as getters and setters on the model instance.
  * Use with interface merging to get type safety.
  *
  * IMPORTANT: Call this AFTER makeAutoObservable, not before.
@@ -7,7 +7,7 @@
  *
  * @example
  * // Interface merging tells TypeScript about the doc fields
- * export interface MyModel extends Readonly<Doc<"myTable">> {}
+ * export interface MyModel extends Doc<"myTable"> {}
  *
  * export class MyModel {
  *   constructor(public doc: Doc<"myTable">) {
@@ -23,6 +23,9 @@ export function exposeDocFields<T extends { doc: object }>(model: T): void {
     Object.defineProperty(model, key, {
       get() {
         return (this as { doc: Record<string, unknown> }).doc[key];
+      },
+      set(value: unknown) {
+        (this as { doc: Record<string, unknown> }).doc[key] = value;
       },
       enumerable: true,
       configurable: true,

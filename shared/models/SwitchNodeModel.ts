@@ -4,7 +4,7 @@ import { ProjectModel } from "./ProjectModel";
 import { NodeDocOfKind } from "../../convex/schema";
 import { exposeDocFields } from "./modelUtils";
 
-export interface SwitchNodeModel extends Readonly<NodeDocOfKind<"switch">> {}
+export interface SwitchNodeModel extends NodeDocOfKind<"switch"> {}
 
 export class SwitchNodeModel {
   constructor(
@@ -16,23 +16,23 @@ export class SwitchNodeModel {
   }
 
   setName(name: string) {
-    this.doc.name = name;
+    this.name = name;
   }
 
   setIcon(icon: Icon) {
-    this.doc.icon = icon;
+    this.icon = icon;
   }
 
   setIpAddress(ipAddress: string) {
-    this.doc.ipAddress = ipAddress;
+    this.ipAddress = ipAddress;
   }
 
   setApiType(apiType: "athom_type1" | "athom_type2") {
-    this.doc.apiType = apiType;
+    this.apiType = apiType;
   }
 
   setStatus(isOn: boolean | null) {
-    this.doc.isOn = isOn;
+    this.isOn = isOn;
   }
 
   update({
@@ -46,11 +46,10 @@ export class SwitchNodeModel {
     ipAddress?: string;
     apiType?: "athom_type1" | "athom_type2";
   }) {
-    const doc = this.doc;
-    if (name !== undefined) doc.name = name;
-    if (icon !== undefined) doc.icon = icon;
-    if (ipAddress !== undefined) doc.ipAddress = ipAddress;
-    if (apiType !== undefined) doc.apiType = apiType;
+    if (name !== undefined) this.name = name;
+    if (icon !== undefined) this.icon = icon;
+    if (ipAddress !== undefined) this.ipAddress = ipAddress;
+    if (apiType !== undefined) this.apiType = apiType;
   }
 
   remove() {
@@ -77,7 +76,7 @@ export class SwitchNodeModel {
 
     if (!response.ok)
       throw new Error(
-        `Failed to turn on switch at ${this.doc.ipAddress}: ${response.statusText}`,
+        `Failed to turn on switch at ${this.ipAddress}: ${response.statusText}`,
       );
 
     this.setStatus(true);
@@ -95,14 +94,14 @@ export class SwitchNodeModel {
 
     if (!response.ok)
       throw new Error(
-        `Failed to turn off switch at ${this.doc.ipAddress}: ${response.statusText}`,
+        `Failed to turn off switch at ${this.ipAddress}: ${response.statusText}`,
       );
 
     this.setStatus(false);
   }
 
   async toggle() {
-    const newState = this.doc.isOn === null ? true : !this.doc.isOn;
+    const newState = this.isOn === null ? true : !this.isOn;
 
     if (import.meta.env.VITE_IS_DEV_MODE) {
       this.setStatus(newState);
@@ -115,7 +114,7 @@ export class SwitchNodeModel {
 
     if (!response.ok)
       throw new Error(
-        `Failed to toggle switch at ${this.doc.ipAddress}: ${response.statusText}`,
+        `Failed to toggle switch at ${this.ipAddress}: ${response.statusText}`,
       );
 
     this.setStatus(newState);
@@ -134,7 +133,7 @@ export class SwitchNodeModel {
 
     if (!response.ok)
       throw new Error(
-        `Failed to refresh switch status at ${this.doc.ipAddress}: ${response.statusText}`,
+        `Failed to refresh switch status at ${this.ipAddress}: ${response.statusText}`,
       );
 
     const data = await response.json();

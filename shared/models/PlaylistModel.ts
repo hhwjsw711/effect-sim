@@ -5,7 +5,7 @@ import { ensure } from "../ensure";
 import { ProjectModel } from "./ProjectModel";
 import { exposeDocFields } from "./modelUtils";
 
-export interface PlaylistModel extends Readonly<Doc<"playlists">> {}
+export interface PlaylistModel extends Doc<"playlists"> {}
 
 export class PlaylistModel {
   constructor(
@@ -17,7 +17,7 @@ export class PlaylistModel {
   }
 
   get sequences(): SequenceModel[] {
-    return this.doc.sequenceIds
+    return this.sequenceIds
       .map((id) => this.project?.sequences?.find((seq) => seq._id === id))
       .filter((seq): seq is SequenceModel => Boolean(seq));
   }
@@ -33,13 +33,12 @@ export class PlaylistModel {
     if (!this.project?.sequences) return [];
     return this.project.sequences.filter(
       (seq) =>
-        seq.projectId === this.projectId &&
-        !this.doc.sequenceIds.includes(seq._id),
+        seq.projectId === this.projectId && !this.sequenceIds.includes(seq._id),
     );
   }
 
   setName(name: string) {
-    this.doc.name = name;
+    this.name = name;
   }
 
   remove() {
@@ -49,26 +48,25 @@ export class PlaylistModel {
   addSequence(sequenceOrId: SequenceModel | Id<"sequences">) {
     const sequenceId =
       typeof sequenceOrId === "string" ? sequenceOrId : sequenceOrId._id;
-    this.doc.sequenceIds.push(sequenceId);
+    this.sequenceIds.push(sequenceId);
   }
 
   removeSequence(sequenceId: Id<"sequences">) {
-    const index = this.doc.sequenceIds.indexOf(sequenceId);
-    if (index >= 0) this.doc.sequenceIds.splice(index, 1);
+    const index = this.sequenceIds.indexOf(sequenceId);
+    if (index >= 0) this.sequenceIds.splice(index, 1);
   }
 
   removeSequenceByIndex(index: number) {
-    if (index >= 0 && index < this.doc.sequenceIds.length) {
-      this.doc.sequenceIds.splice(index, 1);
-    }
+    if (index >= 0 && index < this.sequenceIds.length)
+      this.sequenceIds.splice(index, 1);
   }
 
   reorderSequences(oldIndex: number, newIndex: number) {
     if (oldIndex === newIndex) return;
-    if (oldIndex < 0 || oldIndex >= this.doc.sequenceIds.length) return;
-    if (newIndex < 0 || newIndex >= this.doc.sequenceIds.length) return;
+    if (oldIndex < 0 || oldIndex >= this.sequenceIds.length) return;
+    if (newIndex < 0 || newIndex >= this.sequenceIds.length) return;
 
-    const [movedItem] = this.doc.sequenceIds.splice(oldIndex, 1);
-    this.doc.sequenceIds.splice(newIndex, 0, movedItem);
+    const [movedItem] = this.sequenceIds.splice(oldIndex, 1);
+    this.sequenceIds.splice(newIndex, 0, movedItem);
   }
 }

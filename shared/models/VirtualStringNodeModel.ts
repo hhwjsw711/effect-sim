@@ -7,7 +7,7 @@ import { VirtualStringNodeSegmentModel } from "./VirtualStringNodeSegmentModel";
 import { exposeDocFields } from "./modelUtils";
 
 export interface VirtualStringNodeModel
-  extends Readonly<NodeDocOfKind<"virtual_string">> {}
+  extends NodeDocOfKind<"virtual_string"> {}
 
 export class VirtualStringNodeModel {
   constructor(
@@ -20,30 +20,30 @@ export class VirtualStringNodeModel {
     exposeDocFields(this);
   }
 
-  get segments(): VirtualStringNodeSegmentModel[] {
-    return this.doc.segments.map(
+  get segmentModels(): VirtualStringNodeSegmentModel[] {
+    return this.segments.map(
       (segment, index) =>
         new VirtualStringNodeSegmentModel(segment, this, index),
     );
   }
 
   get ledCount() {
-    return this.doc.segments.reduce(
+    return this.segments.reduce(
       (total, segment) => total + (segment.toIndex - segment.fromIndex + 1),
       0,
     );
   }
 
   setName(name: string) {
-    this.doc.name = name;
+    this.name = name;
   }
 
   setIcon(icon: Icon) {
-    this.doc.icon = icon;
+    this.icon = icon;
   }
 
   setSegments(segments: Segment[]) {
-    this.doc.segments = segments;
+    this.segments = segments;
   }
 
   update({
@@ -55,10 +55,9 @@ export class VirtualStringNodeModel {
     icon?: Icon;
     segments?: Segment[];
   }) {
-    const doc = this.doc;
-    if (name !== undefined) doc.name = name;
-    if (icon !== undefined) doc.icon = icon;
-    if (segments !== undefined) doc.segments = segments;
+    if (name !== undefined) this.name = name;
+    if (icon !== undefined) this.icon = icon;
+    if (segments !== undefined) this.segments = segments;
   }
 
   remove() {
