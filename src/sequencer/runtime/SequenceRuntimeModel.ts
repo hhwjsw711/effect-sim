@@ -39,7 +39,7 @@ export class SequenceRuntimeModel {
     const newActiveEventIds = new Set<string>();
 
     // Find which events are currently active
-    for (const track of this.sequence.tracks)
+    for (const track of this.sequence.trackModels)
       for (const event of track.events)
         if (currentFrame >= event.startFrame && currentFrame < event.endFrame)
           newActiveEventIds.add(event.id);
@@ -56,7 +56,7 @@ export class SequenceRuntimeModel {
     const newEffects: SequenceRuntimeEffectModel[] = [];
     const newEffectsById = new Map<string, SequenceRuntimeEffectModel>();
 
-    for (const track of this.sequence.tracks)
+    for (const track of this.sequence.trackModels)
       for (const event of track.events) {
         if (!newActiveEventIds.has(event.id)) continue;
 

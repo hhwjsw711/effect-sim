@@ -91,7 +91,7 @@ export const TableSyncer = <TTableName extends TableNames>({
           console.log(
             `table ${table} model ${model._id} updated to ${insert._id}`,
           );
-          model.doc._id = insert._id as Id<TTableName>;
+          (model as { _id: Id<TTableName> })._id = insert._id as Id<TTableName>;
         }
       });
 

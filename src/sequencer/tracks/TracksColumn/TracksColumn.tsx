@@ -18,7 +18,7 @@ export default function TracksColumn() {
 
   const { activeId, handleDragStart, handleDragEnd, handleDragCancel } =
     useTracksDrag({
-      tracks: sequence.sequence.tracks,
+      tracks: sequence.sequence.trackModels,
       onReorder: ({ trackId, targetIndex }) => {
         try {
           sequence.sequence.reorderTrack(trackId, targetIndex);
@@ -29,7 +29,7 @@ export default function TracksColumn() {
     });
 
   const activeTrack = activeId
-    ? (sequence.sequence.tracks.find(
+    ? (sequence.sequence.trackModels.find(
         (track) => track.id === String(activeId),
       ) ?? null)
     : null;

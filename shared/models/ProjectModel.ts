@@ -211,8 +211,8 @@ export class ProjectModel {
       if (!node) continue;
 
       // All node models have these properties
-      if (patch.parentId !== undefined) node.doc.parentId = patch.parentId;
-      if (patch.order !== undefined) node.doc.order = patch.order;
+      if (patch.parentId !== undefined) node.parentId = patch.parentId;
+      if (patch.order !== undefined) node.order = patch.order;
     }
   }
 

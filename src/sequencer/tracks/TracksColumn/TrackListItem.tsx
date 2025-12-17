@@ -50,7 +50,7 @@ export function TrackListItem({ track, isSelected }: TrackListItemProps) {
       {...listeners}
       onClick={() => {
         if (hasMovedRef.current) return;
-        const trackModel = sequence.sequence.tracks.find((t) => t.id === track.id);
+        const trackModel = sequence.sequence.trackModels.find((t) => t.id === track.id);
         if (!trackModel) return;
         appModel.setSelectedEntity({
           kind: "track",
@@ -98,7 +98,7 @@ export function TrackListItem({ track, isSelected }: TrackListItemProps) {
                 event.stopPropagation();
                 try {
                   const newTrackId = sequence.sequence.duplicateTrack(track.id);
-                  const newTrack = sequence.sequence.tracks.find(
+                  const newTrack = sequence.sequence.trackModels.find(
                     (t) => t.id === newTrackId,
                   );
                   if (!newTrack) return;

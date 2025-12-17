@@ -113,7 +113,7 @@ export class SequenceUIModel {
   }
 
   get tracks() {
-    return this.sequence.tracks.map(
+    return this.sequence.trackModels.map(
       (track) => new SequenceTrackUIModel(this, track),
     );
   }

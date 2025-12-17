@@ -68,14 +68,14 @@ export class VirtualStringNodeSegmentModel {
   }
 
   update(updatedSegment: Segment) {
-    const segments = this.virtualStringNode.doc.segments;
+    const segments = this.virtualStringNode.segments;
     const newSegments = [...segments];
     newSegments[this.segmentIndex] = updatedSegment;
     this.virtualStringNode.setSegments(newSegments);
   }
 
   remove() {
-    const segments = this.virtualStringNode.doc.segments;
+    const segments = this.virtualStringNode.segments;
     const newSegments = segments.filter((_, i) => i !== this.segmentIndex);
     this.virtualStringNode.setSegments(newSegments);
   }

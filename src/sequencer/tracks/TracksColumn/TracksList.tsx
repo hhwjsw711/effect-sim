@@ -10,7 +10,7 @@ import { useSequence } from "../../SequencerContext";
 
 export function TracksList() {
   const sequence = useSequence();
-  const trackIds = sequence.sequence.tracks.map((track) => track.id);
+  const trackIds = sequence.sequence.trackModels.map((track) => track.id);
 
   return (
     <ScrollArea
@@ -20,7 +20,7 @@ export function TracksList() {
     >
       <SortableContext items={trackIds} strategy={verticalListSortingStrategy}>
         <Stack gap={0}>
-          {sequence.sequence.tracks.map((track) => (
+          {sequence.sequence.trackModels.map((track) => (
             <TrackListItem
               key={track.id}
               track={track}

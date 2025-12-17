@@ -17,8 +17,8 @@ export class SequenceModel {
     exposeDocFields(this);
   }
 
-  get tracks() {
-    return this.doc.tracks.map((track) => new TrackModel(track, this));
+  get trackModels() {
+    return this.tracks.map((track) => new TrackModel(track, this));
   }
 
   setName(name: string) {
@@ -40,7 +40,7 @@ export class SequenceModel {
   }) {
     if (name !== undefined) this.name = name;
     if (numFrames !== undefined) this.numFrames = numFrames;
-    if (tracks !== undefined) this.doc.tracks = tracks;
+    if (tracks !== undefined) this.tracks = tracks;
   }
 
   remove() {
@@ -49,18 +49,18 @@ export class SequenceModel {
   }
 
   addTrack(track?: TrackData) {
-    this.doc.tracks.push(
+    this.tracks.push(
       track ?? {
         id: createId(),
-        name: `Track ${this.tracks.length + 1}`,
+        name: `Track ${this.trackModels.length + 1}`,
         events: [],
       },
     );
   }
 
   removeTrack(trackId: string) {
-    const index = this.doc.tracks.findIndex((t) => t.id === trackId);
-    if (index >= 0) this.doc.tracks.splice(index, 1);
+    const index = this.tracks.findIndex((t) => t.id === trackId);
+    if (index >= 0) this.tracks.splice(index, 1);
   }
 
   renameTrack(trackId: string, name: string) {
@@ -70,7 +70,7 @@ export class SequenceModel {
         `New track name for trackId '${trackId}' in sequence '${this._id}' is empty after trimming`,
       );
 
-    const track = this.doc.tracks.find((t) => t.id === trackId);
+    const track = this.tracks.find((t) => t.id === trackId);
     if (!track)
       throw new Error(
         `Track with id '${trackId}' could not be found in sequence '${this._id}'`,
@@ -80,7 +80,7 @@ export class SequenceModel {
   }
 
   duplicateTrack(trackId: string): string {
-    const tracks = this.doc.tracks;
+    const tracks = this.tracks;
     const originalTrackIndex = tracks.findIndex((t) => t.id === trackId);
     if (originalTrackIndex === -1)
       throw new Error(
@@ -118,7 +118,7 @@ export class SequenceModel {
   }
 
   reorderTrack(trackId: string, targetIndex: number) {
-    const tracks = this.doc.tracks;
+    const tracks = this.tracks;
     const currentIndex = tracks.findIndex((t) => t.id === trackId);
     if (currentIndex === -1)
       throw new Error(
@@ -132,7 +132,7 @@ export class SequenceModel {
   }
 
   addEvent(trackId: string, event: TrackEvent) {
-    const track = this.doc.tracks.find((t) => t.id === trackId);
+    const track = this.tracks.find((t) => t.id === trackId);
     if (!track)
       throw new Error(
         `Track with id '${trackId}' could not be found in sequence '${this._id}'`,
@@ -155,7 +155,7 @@ export class SequenceModel {
       props?: unknown;
     },
   ) {
-    const track = this.doc.tracks.find((t) => t.id === trackId);
+    const track = this.tracks.find((t) => t.id === trackId);
     if (!track)
       throw new Error(
         `Track with id '${trackId}' could not be found in sequence '${this._id}'`,
@@ -177,7 +177,7 @@ export class SequenceModel {
   }
 
   removeEvent(trackId: string, eventId: string) {
-    const track = this.doc.tracks.find((t) => t.id === trackId);
+    const track = this.tracks.find((t) => t.id === trackId);
     if (!track)
       throw new Error(
         `Track with id '${trackId}' could not be found in sequence '${this._id}'`,
@@ -196,7 +196,7 @@ export class SequenceModel {
       endFrame?: number;
     },
   ) {
-    const tracks = this.doc.tracks;
+    const tracks = this.tracks;
     const sourceTrack = tracks.find((t) => t.id === sourceTrackId);
     if (!sourceTrack)
       throw new Error(

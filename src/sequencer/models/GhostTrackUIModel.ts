@@ -34,7 +34,7 @@ export class GhostTrackUIModel {
     const preview = this.sequenceUI.dragPreview;
     if (!preview || !this.isTarget) return null;
 
-    const track = this.sequenceUI.sequence.tracks.find(
+    const track = this.sequenceUI.sequence.trackModels.find(
       (t) => t.id === preview.sourceTrackId,
     );
     return track?.events.find((e) => e.id === preview.eventId) ?? null;
@@ -44,4 +44,3 @@ export class GhostTrackUIModel {
     return this.sequenceUI.dragPreview;
   }
 }
-

@@ -16,7 +16,7 @@ export function LedString({
       <LedStringWithOverride string={string} pathPoints={pathPointsOverride} />
     );
 
-  const segments = string.segmentModels;
+  const segments = string.segments;
   if (segments.length === 0) return null;
 
   return (

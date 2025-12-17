@@ -24,7 +24,7 @@ export class TrackModel {
   }
 
   get index() {
-    return this.sequence.doc.tracks.findIndex((t) => t.id === this.id);
+    return this.sequence.tracks.findIndex((t) => t.id === this.id);
   }
 
   get events(): AllTrackEventModels[] {
