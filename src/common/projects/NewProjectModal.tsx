@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { ProjectModel } from "../../../shared/models/ProjectModel";
-import { createTempId } from "../../../shared/models/types";
+import { createTempId, isTempId } from "../../../shared/models/types";
 import { useApp } from "../AppContext";
+import { when } from "mobx";
+import { useApiErrorHandler } from "../errors";
 
 export default function NewProjectModal({
   opened,
@@ -15,6 +17,9 @@ export default function NewProjectModal({
   onCreated: (id: Id<"projects">) => void;
 }) {
   const app = useApp();
+
+  const [isSaving, setIsSaving] = useState(false);
+  const onApiError = useApiErrorHandler();
 
   const project = useMemo(
     () =>
@@ -31,10 +36,20 @@ export default function NewProjectModal({
     [],
   );
 
-  const save = () => {
+  const save = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
     app.addProject(project);
-    onClose();
-    onCreated(project._id);
+    try {
+      // Have to do this kind of shennanings because lack of client-side id in Convex
+      await when(() => !isTempId(project._id));
+      onCreated(project._id);
+      onClose();
+    } catch (error) {
+      onApiError(error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -49,6 +64,7 @@ export default function NewProjectModal({
           label="Project Name"
           value={project.name}
           autoFocus
+          disabled={isSaving}
           onChange={(e) => project.setName(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && project.name.trim()) {
@@ -57,7 +73,7 @@ export default function NewProjectModal({
             }
           }}
         />
-        <Button disabled={!project.name.trim()} onClick={save}>
+        <Button disabled={!project.name.trim() || isSaving} onClick={save}>
           Create Project
         </Button>
       </Stack>

@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button, Modal, Stack, TextInput, NumberInput } from "@mantine/core";
 import { useApp } from "../../common/AppContext";
 import { useAdaptiveStep } from "../../common/hooks/useAdaptiveStep";
 import { SequenceModel } from "../../../shared/models/sequencer/SequenceModel";
-import { createTempId } from "../../../shared/models/types";
+import { createTempId, isTempId } from "../../../shared/models/types";
+import { when } from "mobx";
+import { useApiErrorHandler } from "../../common/errors";
 
 export default function CreateSequenceModal({
   opened,
@@ -15,6 +17,9 @@ export default function CreateSequenceModal({
   onCreated: (sequence: SequenceModel) => void;
 }) {
   const project = useApp().getProject();
+
+  const [isSaving, setIsSaving] = useState(false);
+  const onApiError = useApiErrorHandler();
 
   const newSequence = useMemo(
     () =>
@@ -31,7 +36,24 @@ export default function CreateSequenceModal({
       ),
     [project],
   );
+
   const step = useAdaptiveStep(newSequence.numFrames);
+
+  const save = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    project.addSequence(newSequence);
+    try {
+      // Have to do this kind of shennanings because lack of client-side id in Convex
+      await when(() => !isTempId(newSequence._id));
+      onCreated(newSequence);
+      onClose();
+    } catch (error) {
+      onApiError(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <Modal opened={opened} onClose={onClose} title="Create Sequence" size="sm">
@@ -40,13 +62,12 @@ export default function CreateSequenceModal({
           label="Name"
           value={newSequence.name}
           autoFocus
+          disabled={isSaving}
           onChange={(e) => newSequence.setName(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && newSequence.name.trim()) {
               e.preventDefault();
-              project.addSequence(newSequence);
-              onCreated(newSequence);
-              onClose();
+              save();
             }
           }}
         />
@@ -55,16 +76,15 @@ export default function CreateSequenceModal({
           value={newSequence.numFrames}
           step={step}
           onChange={(value) => newSequence.setNumFrames(value as number)}
+          disabled={isSaving}
           min={1}
           max={10000}
         />
         <Button
-          disabled={!newSequence.name.trim()}
+          disabled={!newSequence.name.trim() || isSaving}
           onClick={() => {
             if (!newSequence.name.trim()) return;
-            project.addSequence(newSequence);
-            onCreated(newSequence);
-            onClose();
+            save();
           }}
         >
           Create

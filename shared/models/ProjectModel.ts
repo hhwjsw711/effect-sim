@@ -102,9 +102,6 @@ export class ProjectModel {
   }
 
   findSequenceById(id: Id<"sequences">): SequenceModel | null {
-    if (isTempId(id))
-      return this.sequences.find((s) => s.tempId === id) ?? null;
-
     return this.sequences.find((s) => s._id === id) ?? null;
   }
 

@@ -9,13 +9,10 @@ import { exposeDocFields } from "../modelUtils";
 export interface SequenceModel extends Readonly<Doc<"sequences">> {}
 
 export class SequenceModel {
-  tempId: Id<"sequences"> | null = null;
-
   constructor(
     public doc: Doc<"sequences">,
     public readonly project: ProjectModel,
   ) {
-    if (isTempId(doc._id)) this.tempId = doc._id;
     makeAutoObservable(this);
     exposeDocFields(this);
   }

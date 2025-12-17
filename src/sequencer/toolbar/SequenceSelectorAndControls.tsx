@@ -5,7 +5,6 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import EditSequenceModal from "./EditSequenceModal";
 import CreateSequenceModal from "./CreateSequenceModal";
 import { useSequencerPanel } from "../SequencerContext";
-import { useApp } from "../../common/AppContext";
 
 export default function SequenceSelectorAndControls() {
   const sequencer = useSequencerPanel();
