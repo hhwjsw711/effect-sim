@@ -1,7 +1,8 @@
-import { Modal, Stack, NumberInput, TextInput } from "@mantine/core";
+import { Modal, Stack, NumberInput, TextInput, Group, Button } from "@mantine/core";
 import { useApp } from "../AppContext";
 import { DEFAULT_FRAMERATE } from "./projectConstants";
 import { useAdaptiveStep } from "../hooks/useAdaptiveStep";
+import { useConfirmation } from "../confirmation/ConfirmationProvider";
 
 export default function ProjectSettingsModal({
   opened,
@@ -10,7 +11,9 @@ export default function ProjectSettingsModal({
   opened: boolean;
   onClose: () => void;
 }) {
-  const project = useApp().getProject();
+  const app = useApp();
+  const project = app.getProject();
+  const { confirm } = useConfirmation();
 
   const currentStringLedSize = project.settings.stringLedSize ?? 0.1;
   const currentFramerate =
@@ -67,6 +70,26 @@ export default function ProjectSettingsModal({
           step={framerateStep}
           suffix=" FPS"
         />
+        <Group justify="space-between" mt="md">
+          <Button
+            color="red"
+            variant="light"
+            onClick={() => {
+              confirm({
+                title: "Delete project?",
+                content: `Are you sure you want to delete "${project.name}"? This will permanently delete all nodes, sequences, and playlists in this project. This cannot be undone.`,
+                confirmButton: "Delete",
+                confirmButtonColor: "red",
+              }).then((confirmed) => {
+                if (!confirmed) return;
+                app.removeProject(project);
+                onClose();
+              });
+            }}
+          >
+            Delete Project
+          </Button>
+        </Group>
       </Stack>
     </Modal>
   );

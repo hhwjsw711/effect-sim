@@ -142,6 +142,12 @@ export class AppModel {
     this.projects.push(project);
   }
 
+  removeProject(project: ProjectModel) {
+    const index = this.projects.indexOf(project);
+    if (index >= 0) this.projects.splice(index, 1);
+    if (this.currentProjectId === project._id) this.currentProjectId = null;
+  }
+
   startPlacingString(stringId: Id<"nodes">) {
     this.setPlacingStringId(stringId);
     if (this.isMeasureMode) this.setIsMeasureMode(false);
