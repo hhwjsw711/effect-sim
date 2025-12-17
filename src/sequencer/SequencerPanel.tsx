@@ -18,7 +18,12 @@ export default function SequencerPanel({ id }: { id: string }) {
 
   return (
     <SequencerContext value={sequencer}>
-      <Stack gap="xs" style={{ height: "100%" }}>
+      <Stack
+        // There is a bug in mobx where the sequence runtime is not updated when the playhead doesnt play when the sequence changes, so doing this for now
+        key={sequencer.selectedSequenceId ?? "no-sequence"}
+        gap="xs"
+        style={{ height: "100%" }}
+      >
         {sequencer.sequence ? (
           <>
             {sequencer.sequence.isPlaying && (
