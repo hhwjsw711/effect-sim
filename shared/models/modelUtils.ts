@@ -6,9 +6,17 @@ import { action } from "mobx";
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /**
+ * Fields that should not have setters generated (immutable after creation).
+ */
+const READONLY_FIELDS = ["_id", "_creationTime"] as const;
+const READONLY_FIELDS_SET = new Set<string>(READONLY_FIELDS);
+
+/**
  * Exposes all fields from `model.doc` as:
  * - Getters for reading (e.g., `model.name`)
  * - Setter functions for writing (e.g., `model.setName(value)`)
+ *
+ * Note: `_id` and `_creationTime` do not get setters as they are immutable.
  *
  * IMPORTANT: Call this AFTER makeAutoObservable, not before.
  * MobX doesn't handle dynamically-added getters well if they exist before it runs.
@@ -36,6 +44,9 @@ export function exposeDocFields<T extends { doc: object }>(model: T): void {
         configurable: true,
       });
 
+    // Skip setters for readonly fields
+    if (READONLY_FIELDS_SET.has(key)) continue;
+
     // Add setter function (setXxx) wrapped in MobX action
     const setterName = `set${capitalize(key)}`;
     if (!(setterName in model))
@@ -54,14 +65,22 @@ export function exposeDocFields<T extends { doc: object }>(model: T): void {
 }
 
 /**
- * Generates setter function types for each property in T.
+ * Fields that are readonly and should not have setters.
+ * Derived from READONLY_FIELDS constant.
+ */
+type ReadonlyFields = (typeof READONLY_FIELDS)[number];
+
+/**
+ * Generates setter function types for each property in T (excluding readonly fields).
  * e.g., { name: string } becomes { setName: (value: string) => void }
  * Note: All setters are always defined (not optional), even for optional properties.
  */
 type SettersFor<T> = {
-  [K in keyof T as K extends string ? `set${Capitalize<K>}` : never]-?: (
-    value: T[K],
-  ) => void;
+  [K in keyof T as K extends ReadonlyFields
+    ? never
+    : K extends string
+      ? `set${Capitalize<K>}`
+      : never]-?: (value: T[K]) => void;
 };
 
 /**
