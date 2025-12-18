@@ -23,7 +23,7 @@
     "noUncheckedSideEffectImports": true,
 
     /* Import paths */
-    "baseUrl": ".",
+    //"baseUrl": ".",
     "paths": {
       "react-nil": ["./src/types/react-nil.d.ts"]
     },
