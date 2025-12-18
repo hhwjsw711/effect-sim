@@ -7,3 +7,5 @@ export function getAdaptiveStep(value: number | string | undefined): number {
   const order = Math.floor(Math.log10(val));
   return Math.pow(10, order);
 }
+
+

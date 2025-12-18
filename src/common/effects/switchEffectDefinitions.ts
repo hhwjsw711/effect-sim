@@ -3,7 +3,7 @@ import { TurnOn } from "./switch/TurnOn";
 import { TurnOff } from "./switch/TurnOff";
 import { Toggle } from "./switch/Toggle";
 import { TurnOnThenOff } from "./switch/TurnOnThenOff";
-import { AnyZodObject, z } from "zod";
+import { z } from "zod";
 import { inspectableProps } from "../props/inspectableProps";
 import type { SwitchNodeModel } from "../../../shared/models/SwitchNodeModel";
 
@@ -16,7 +16,7 @@ export interface SwitchEffectDefinition {
   id: string;
   name: string;
   component: SwitchEffectComponent;
-  props?: AnyZodObject;
+  props?: z.ZodObject<z.ZodRawShape>;
   defaultProps?: z.infer<(typeof effectProps)[keyof typeof effectProps]>;
 }
 
@@ -32,7 +32,10 @@ const effectProps = {
   turnOff: z.object({}),
   toggle: z.object({}),
   turnOnThenOff: z.object({}),
-} satisfies Record<keyof typeof switchEffectDefinitionIds, AnyZodObject>;
+} satisfies Record<
+  keyof typeof switchEffectDefinitionIds,
+  z.ZodObject<z.ZodRawShape>
+>;
 
 export const switchEffectDefinitions = {
   turnOn: {

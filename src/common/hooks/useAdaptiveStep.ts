@@ -21,3 +21,5 @@ export function useAdaptiveStep(value: number | undefined) {
   const baseStep = getAdaptiveStep(value);
   return isShiftHeld ? baseStep * 5 : baseStep;
 }
+
+

@@ -1,6 +1,6 @@
 import { produceLiteral } from "../../../shared/misc";
 import { RainbowRandom } from "./string/RainbowRandom";
-import { AnyZodObject, z } from "zod";
+import { z } from "zod";
 import { inspectableProps } from "../props/inspectableProps";
 import { Sparkle } from "./string/Sparkle";
 import { SetColor } from "./string/SetColor";
@@ -29,7 +29,7 @@ export interface StringEffectDefinition {
   name: string;
   icon: string;
   component: EffectComponent;
-  props?: AnyZodObject;
+  props?: z.ZodObject<z.ZodRawShape>;
   defaultProps?: z.infer<(typeof effectProps)[keyof typeof effectProps]>;
 }
 
@@ -145,7 +145,10 @@ const effectProps = {
     complexity: inspectableProps.number,
     intensity: inspectableProps.number,
   }),
-} satisfies Record<keyof typeof stringEffectDefinitionIds, AnyZodObject>;
+} satisfies Record<
+  keyof typeof stringEffectDefinitionIds,
+  z.ZodObject<z.ZodRawShape>
+>;
 
 export const stringEffectDefinitions = {
   rainbowRandom: {
