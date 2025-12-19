@@ -18,6 +18,7 @@ import { Fireworks } from "./string/Fireworks";
 import { CycleSine } from "./string/CycleSine";
 import { Lightning } from "./string/Lightning";
 import { Plasma } from "./string/Plasma";
+import { BouncingBalls } from "./string/BouncingBalls";
 import type { StringLedDataApi } from "../../data/StringLedDataModel";
 
 export type EffectComponent = React.ComponentType<{
@@ -51,6 +52,7 @@ export const stringEffectDefinitionIds = produceLiteral([
   "cycleSine",
   "lightning",
   "plasma",
+  "bouncingBalls",
 ]);
 
 const effectProps = {
@@ -143,6 +145,12 @@ const effectProps = {
     speed: inspectableProps.number,
     scale: inspectableProps.number,
     complexity: inspectableProps.number,
+    intensity: inspectableProps.number,
+  }),
+  bouncingBalls: z.object({
+    numBalls: inspectableProps.number,
+    speed: inspectableProps.number,
+    size: inspectableProps.number,
     intensity: inspectableProps.number,
   }),
 } satisfies Record<
@@ -358,6 +366,19 @@ export const stringEffectDefinitions = {
       speed: 1,
       scale: 1,
       complexity: 1,
+      intensity: 1,
+    },
+  },
+  bouncingBalls: {
+    id: stringEffectDefinitionIds.bouncingBalls,
+    name: "Bouncing Balls",
+    icon: "🎾",
+    component: BouncingBalls,
+    props: effectProps.bouncingBalls,
+    defaultProps: {
+      numBalls: 3,
+      speed: 1,
+      size: 3,
       intensity: 1,
     },
   },
