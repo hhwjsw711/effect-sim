@@ -6,6 +6,8 @@ import { stringEffectDefinitionsMap } from "../../common/effects/stringEffectDef
 import { switchEffectDefinitionsMap } from "../../common/effects/switchEffectDefinitions";
 
 export class SequenceRuntimeEffectModel {
+  readonly seed = Math.random();
+
   constructor(
     public readonly runtime: SequenceRuntimeModel,
     public readonly event: AllTrackEventModels,
