@@ -249,6 +249,8 @@ export class SequenceUIModel {
   }
 
   handleWheel(container: HTMLElement, event: WheelEvent) {
+    if (!event.ctrlKey) return;
+
     event.preventDefault();
     const rect = container.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;

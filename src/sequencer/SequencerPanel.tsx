@@ -29,7 +29,7 @@ export default function SequencerPanel({ id }: { id: string }) {
             {sequencer.sequence.isPlaying && (
               <SequenceRuntime model={sequencer.sequence.runtime} />
             )}
-            <Stack gap="0" style={{ flex: 1, minWidth: 0 }}>
+            <Stack gap="0" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
               <SequencerToolbar />
               <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
                 <SequencerView />
