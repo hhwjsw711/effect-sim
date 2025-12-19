@@ -27,14 +27,12 @@ function getCycleColor(
   const segmentIndex = Math.floor(segment);
   const t = segment - segmentIndex;
 
-  if (segmentIndex === 0) {
+  if (segmentIndex === 0)
     // color1 -> color2
     return lerpColor(color1, color2, t);
-  }
-  if (segmentIndex === 1) {
+  if (segmentIndex === 1)
     // color2 -> color3
     return lerpColor(color2, color3, t);
-  }
   // segmentIndex === 2: color3 -> color1
   return lerpColor(color3, color1, t);
 }

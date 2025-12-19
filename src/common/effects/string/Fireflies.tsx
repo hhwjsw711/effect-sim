@@ -1,7 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { useMemo } from "react";
+import { useRef, useEffect } from "react";
 import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 interface FireflyData {
@@ -23,26 +23,31 @@ export function Fireflies({
   props?: z.infer<typeof stringEffectDefinitions.fireflies.props>;
 }) {
   const model = useEffectContext();
+  const firefliesDataRef = useRef<FireflyData[]>([]);
+  const lastLoopCountRef = useRef(model.loopCount);
 
-  const firefliesData = useMemo(() => {
-    const data: FireflyData[] = [];
+  // Regenerate fireflies when loop count changes
+  useEffect(() => {
+    if (lastLoopCountRef.current !== model.loopCount || firefliesDataRef.current.length === 0) {
+      lastLoopCountRef.current = model.loopCount;
+      const data: FireflyData[] = [];
 
-    for (let f = 0; f < props.numFireflies; f++) {
-      data.push({
-        travelDistance:
-          props.minTravelDistance +
-          Math.random() * (props.maxTravelDistance - props.minTravelDistance),
-        spawnPosition: Math.random(),
-        phase1: Math.random() * Math.PI * 2,
-        phase2: Math.random() * Math.PI * 2,
-        phase3: Math.random() * Math.PI * 2,
-        freq1: Math.floor(Math.random() * 2) + 1,
-        freq2: Math.floor(Math.random() * 2) + 2,
-        freq3: Math.floor(Math.random() * 3) + 3,
-      });
+      for (let f = 0; f < props.numFireflies; f++)
+        data.push({
+          travelDistance:
+            props.minTravelDistance +
+            Math.random() * (props.maxTravelDistance - props.minTravelDistance),
+          spawnPosition: Math.random(),
+          phase1: Math.random() * Math.PI * 2,
+          phase2: Math.random() * Math.PI * 2,
+          phase3: Math.random() * Math.PI * 2,
+          freq1: Math.floor(Math.random() * 2) + 1,
+          freq2: Math.floor(Math.random() * 2) + 2,
+          freq3: Math.floor(Math.random() * 3) + 3,
+        });
+
+      firefliesDataRef.current = data;
     }
-
-    return data;
   }, [
     props.numFireflies,
     props.minTravelDistance,
@@ -56,8 +61,8 @@ export function Fireflies({
     const adjustedRatio = (model.effectPlaybackRatio * props.speed) % 1;
     const time = adjustedRatio * Math.PI * 2;
 
-    for (let f = 0; f < firefliesData.length; f++) {
-      const firefly = firefliesData[f];
+    for (let f = 0; f < firefliesDataRef.current.length; f++) {
+      const firefly = firefliesDataRef.current[f];
 
       // Create multiple overlapping sine waves with different frequencies
       const wave1 = Math.sin(time * firefly.freq1 + firefly.phase1) * 0.5;

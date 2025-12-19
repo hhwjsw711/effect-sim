@@ -13,14 +13,13 @@ export function RainbowRandom({
   useEffectFrame((frame) => {
     const framesPerUpdate = Math.max(1, Math.floor(props.delayMs / 16));
     if (frame % framesPerUpdate !== 0) return;
-    for (let i = 0; i < string.ledCount; i++) {
+    for (let i = 0; i < string.ledCount; i++)
       string.setPixel(
         i,
         Math.floor(Math.random() * 256),
         Math.floor(Math.random() * 256),
         Math.floor(Math.random() * 256),
       );
-    }
   });
 
   return null;

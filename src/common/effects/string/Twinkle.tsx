@@ -1,7 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { useMemo } from "react";
+import { useRef, useEffect } from "react";
 import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 interface TwinkleLedData {
@@ -17,25 +17,32 @@ export function Twinkle({
   props?: z.infer<typeof stringEffectDefinitions.twinkle.props>;
 }) {
   const model = useEffectContext();
+  const ledDataRef = useRef<TwinkleLedData[]>([]);
+  const lastLoopCountRef = useRef(model.loopCount);
 
   // Pre-compute which LEDs twinkle and their offsets
-  const ledData = useMemo(() => {
-    const data: TwinkleLedData[] = [];
-    for (let i = 0; i < string.ledCount; i++) {
-      data.push({
-        shouldApply: Math.random() < props.ratioOfLedsToApplyTo,
-        offset: Math.random(),
-      });
+  useEffect(() => {
+    if (
+      lastLoopCountRef.current !== model.loopCount ||
+      ledDataRef.current.length !== string.ledCount
+    ) {
+      lastLoopCountRef.current = model.loopCount;
+      const data: TwinkleLedData[] = [];
+      for (let i = 0; i < string.ledCount; i++)
+        data.push({
+          shouldApply: Math.random() < props.ratioOfLedsToApplyTo,
+          offset: Math.random(),
+        });
+      ledDataRef.current = data;
     }
-    return data;
   }, [string.ledCount, props.ratioOfLedsToApplyTo, model.loopCount]);
 
   useEffectFrame(() => {
     const adjustedRatio = (model.effectPlaybackRatio * props.speed) % 1;
 
     for (let i = 0; i < string.ledCount; i++) {
-      const led = ledData[i];
-      if (!led.shouldApply) continue;
+      const led = ledDataRef.current[i];
+      if (!led || !led.shouldApply) continue;
 
       const ledRatio = (adjustedRatio + led.offset) % 1;
       const twinkleRatio = Math.sin(ledRatio * Math.PI * 2) * 0.5 + 0.5;

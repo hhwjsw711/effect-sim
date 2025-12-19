@@ -1,7 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { useMemo } from "react";
+import { useRef, useEffect } from "react";
 import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 // Vibrant firework colors
@@ -38,55 +38,60 @@ export function Fireworks({
   props?: z.infer<typeof stringEffectDefinitions.fireworks.props>;
 }) {
   const model = useEffectContext();
+  const fireworksRef = useRef<FireworkData[]>([]);
+  const lastLoopCountRef = useRef(model.loopCount);
 
   // Pre-calculate fireworks for this loop
-  const fireworks = useMemo(() => {
-    const data: FireworkData[] = [];
+  useEffect(() => {
+    if (lastLoopCountRef.current !== model.loopCount || fireworksRef.current.length === 0) {
+      lastLoopCountRef.current = model.loopCount;
+      const data: FireworkData[] = [];
 
-    // Determine number of fireworks based on frequency (arbitrary scale)
-    const count = Math.max(1, Math.round(props.frequency * 10));
+      // Determine number of fireworks based on frequency (arbitrary scale)
+      const count = Math.max(1, Math.round(props.frequency * 10));
 
-    for (let i = 0; i < count; i++) {
-      // Random properties
-      const startTime = Math.random() * 0.9; // Don't start too late
-      const centerPos = 0.1 + Math.random() * 0.8; // Keep away from edges
-      const colorIdx = Math.floor(Math.random() * fireworkColors.length);
-      const color = fireworkColors[colorIdx];
-      const duration = 0.5 + Math.random() * 0.5; // 0.5s to 1.0s equivalent scale
+      for (let i = 0; i < count; i++) {
+        // Random properties
+        const startTime = Math.random() * 0.9; // Don't start too late
+        const centerPos = 0.1 + Math.random() * 0.8; // Keep away from edges
+        const colorIdx = Math.floor(Math.random() * fireworkColors.length);
+        const color = fireworkColors[colorIdx];
+        const duration = 0.5 + Math.random() * 0.5; // 0.5s to 1.0s equivalent scale
 
-      // Generate particles
-      const numParticles = Math.floor(5 + Math.random() * 10);
-      const particles: Particle[] = [];
+        // Generate particles
+        const numParticles = Math.floor(5 + Math.random() * 10);
+        const particles: Particle[] = [];
 
-      for (let p = 0; p < numParticles; p++) {
-        // Particles burst outward with varying speeds
-        const speed = (0.2 + Math.random() * 0.8) * props.size;
-        // Direction is either left (-1) or right (1)
-        const direction = Math.random() > 0.5 ? 1 : -1;
+        for (let p = 0; p < numParticles; p++) {
+          // Particles burst outward with varying speeds
+          const speed = (0.2 + Math.random() * 0.8) * props.size;
+          // Direction is either left (-1) or right (1)
+          const direction = Math.random() > 0.5 ? 1 : -1;
 
-        particles.push({
-          velocity: speed * direction,
-          decay: 0.5 + Math.random() * 1.5,
+          particles.push({
+            velocity: speed * direction,
+            decay: 0.5 + Math.random() * 1.5,
+          });
+        }
+
+        data.push({
+          id: i,
+          startTime,
+          centerPos,
+          color,
+          particles,
+          duration,
         });
       }
 
-      data.push({
-        id: i,
-        startTime,
-        centerPos,
-        color,
-        particles,
-        duration,
-      });
+      fireworksRef.current = data.sort((a, b) => a.startTime - b.startTime);
     }
-
-    return data.sort((a, b) => a.startTime - b.startTime);
   }, [props.frequency, props.size, model.loopCount]);
 
   useEffectFrame(() => {
     const currentTime = model.effectPlaybackRatio * props.speed;
 
-    for (const fw of fireworks) {
+    for (const fw of fireworksRef.current) {
       // Check if firework is active
       if (currentTime < fw.startTime) continue;
 
@@ -138,7 +143,7 @@ export function Fireworks({
         const brightness =
           (1 - Math.pow(progress, p.decay)) * props.intensity * flicker;
 
-        if (brightness > 0.01) {
+        if (brightness > 0.01)
           addColor(
             ledIndex,
             fw.color[0],
@@ -146,7 +151,6 @@ export function Fireworks({
             fw.color[2],
             brightness,
           );
-        }
       }
     }
   });

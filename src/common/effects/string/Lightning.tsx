@@ -108,10 +108,9 @@ export function Lightning({
           Math.round(intensity * (0.3 + variation)),
           Math.round(intensity * (0.9 + variation)),
         );
-      } else {
+      } else
         // Darkness
         string.setPixel(i, 0, 0, 0);
-      }
     }
   });
 

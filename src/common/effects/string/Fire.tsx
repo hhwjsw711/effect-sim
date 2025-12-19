@@ -55,15 +55,14 @@ export function Fire({
 
     // Step 2: Heat rises - each cell gets heat from cells "below" it
     // We go from top to bottom so we don't propagate heat twice
-    for (let i = ledCount - 1; i >= 2; i--) {
+    for (let i = ledCount - 1; i >= 2; i--)
       heat[i] =
         (heat[i - 1] + heat[i - 2] + heat[i - 2]) / 3 +
         (Math.random() - 0.5) * 0.05;
-    }
 
     // Step 3: Randomly ignite new sparks at the bottom
     const sparkChance = props.sparking;
-    for (let i = 0; i < Math.ceil(ledCount * 0.1); i++) {
+    for (let i = 0; i < Math.ceil(ledCount * 0.1); i++)
       if (Math.random() < sparkChance) {
         const sparkIndex = Math.floor(
           Math.random() * Math.min(7, ledCount * 0.15),
@@ -73,7 +72,6 @@ export function Fire({
           heat[sparkIndex] + 0.5 + Math.random() * 0.5 * props.intensity,
         );
       }
-    }
 
     // Step 4: Map heat to colors and render
     for (let i = 0; i < ledCount; i++) {
