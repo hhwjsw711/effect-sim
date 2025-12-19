@@ -1,5 +1,5 @@
-import { Stack, Text, Select, Box } from "@mantine/core";
-import { useState } from "react";
+import { Stack, Text, Select, Box, Group, Badge } from "@mantine/core";
+import { useState, useRef } from "react";
 import type { Id } from "../../../convex/_generated/dataModel";
 import {
   DndContext,
@@ -27,6 +27,7 @@ export function PlaylistSequencesSection({
     null,
   );
   const [dropdownOpened, setDropdownOpened] = useState(false);
+  const keepOpenRef = useRef(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -37,6 +38,14 @@ export function PlaylistSequencesSection({
   );
 
   const sortableIds = playlist.sequenceIds.map((id, index) => `${id}-${index}`);
+
+  const sequenceCountsInPlaylist = playlist.availableSequences.reduce(
+    (acc, seq) => {
+      acc[seq._id] = playlist.sequenceIds.filter((id) => id === seq._id).length;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <Stack gap="md">
@@ -53,11 +62,31 @@ export function PlaylistSequencesSection({
           value={selectedSequenceId}
           dropdownOpened={dropdownOpened}
           onDropdownOpen={() => setDropdownOpened(true)}
-          onDropdownClose={() => setDropdownOpened(false)}
+          onDropdownClose={() => {
+            if (keepOpenRef.current) {
+              keepOpenRef.current = false;
+              return;
+            }
+            setDropdownOpened(false);
+          }}
           onChange={(value) => {
             if (!value) return;
+            keepOpenRef.current = true;
             playlist.addSequence(value as Id<"sequences">);
             setSelectedSequenceId(null);
+          }}
+          renderOption={({ option }) => {
+            const count = sequenceCountsInPlaylist[option.value] ?? 0;
+            return (
+              <Group justify="space-between" w="100%">
+                <span>{option.label}</span>
+                {count > 0 ? (
+                  <Badge size="xs" variant="light" color="gray">
+                    {count}
+                  </Badge>
+                ) : null}
+              </Group>
+            );
           }}
         />
       </Box>
