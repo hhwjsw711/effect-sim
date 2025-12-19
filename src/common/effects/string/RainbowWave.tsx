@@ -1,9 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { autorun } from "mobx";
-import { useEffect } from "react";
-import { useEffectContext } from "../EffectProvider";
+import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
   const i = Math.floor(h * 6);
@@ -30,25 +28,21 @@ export function RainbowWave({
 }) {
   const model = useEffectContext();
 
-  useEffect(
-    () =>
-      autorun(() => {
-        const timeOffset = model.effectPlaybackRatio * props.speed;
+  useEffectFrame(() => {
+    const timeOffset = model.effectPlaybackRatio * props.speed;
 
-        for (let i = 0; i < string.ledCount; i++) {
-          const positionRatio = i / string.ledCount;
-          const wavePhase =
-            (positionRatio * props.wavelength + timeOffset) * Math.PI * 2;
-          const brightness = Math.sin(wavePhase) * 0.5 + 0.5;
+    for (let i = 0; i < string.ledCount; i++) {
+      const positionRatio = i / string.ledCount;
+      const wavePhase =
+        (positionRatio * props.wavelength + timeOffset) * Math.PI * 2;
+      const brightness = Math.sin(wavePhase) * 0.5 + 0.5;
 
-          const hue = (positionRatio * props.wavelength + timeOffset) % 1;
-          const [r, g, b] = hsvToRgb(hue, 1, brightness);
+      const hue = (positionRatio * props.wavelength + timeOffset) % 1;
+      const [r, g, b] = hsvToRgb(hue, 1, brightness);
 
-          string.setPixel(i, Math.round(r), Math.round(g), Math.round(b));
-        }
-      }),
-    [string, props.speed, props.wavelength],
-  );
+      string.setPixel(i, Math.round(r), Math.round(g), Math.round(b));
+    }
+  });
 
   return null;
 }

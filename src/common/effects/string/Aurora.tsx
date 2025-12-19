@@ -1,9 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { autorun } from "mobx";
-import { useEffect } from "react";
-import { useEffectContext } from "../EffectProvider";
+import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 // Aurora color palette - greens, cyans, and purples
 const auroraColors = [
@@ -43,49 +41,45 @@ export function Aurora({
 }) {
   const model = useEffectContext();
 
-  useEffect(
-    () =>
-      autorun(() => {
-        const time = model.effectPlaybackRatio * props.speed * Math.PI * 2;
+  useEffectFrame(() => {
+    const time = model.effectPlaybackRatio * props.speed * Math.PI * 2;
 
-        for (let i = 0; i < string.ledCount; i++) {
-          const position = i / string.ledCount;
+    for (let i = 0; i < string.ledCount; i++) {
+      const position = i / string.ledCount;
 
-          // Multiple overlapping waves at different frequencies for organic movement
-          const wave1 = Math.sin(position * 4 + time) * 0.3;
-          const wave2 = Math.sin(position * 7 - time * 0.7) * 0.2;
-          const wave3 = Math.sin(position * 2 + time * 1.3) * 0.25;
+      // Multiple overlapping waves at different frequencies for organic movement
+      const wave1 = Math.sin(position * 4 + time) * 0.3;
+      const wave2 = Math.sin(position * 7 - time * 0.7) * 0.2;
+      const wave3 = Math.sin(position * 2 + time * 1.3) * 0.25;
 
-          // Combine waves for a flowing color position
-          const colorPosition =
-            position * props.colorSpread + wave1 + wave2 + wave3 + time * 0.1;
+      // Combine waves for a flowing color position
+      const colorPosition =
+        position * props.colorSpread + wave1 + wave2 + wave3 + time * 0.1;
 
-          // Get base aurora color
-          const [r, g, b] = getAuroraColor(colorPosition);
+      // Get base aurora color
+      const [r, g, b] = getAuroraColor(colorPosition);
 
-          // Create flowing brightness variation (like curtains of light)
-          const curtain1 = Math.sin(position * 3 + time * 0.8) * 0.5 + 0.5;
-          const curtain2 = Math.sin(position * 5 - time * 0.6) * 0.3 + 0.7;
-          const curtain3 = Math.sin(position * 8 + time * 1.1) * 0.2 + 0.8;
+      // Create flowing brightness variation (like curtains of light)
+      const curtain1 = Math.sin(position * 3 + time * 0.8) * 0.5 + 0.5;
+      const curtain2 = Math.sin(position * 5 - time * 0.6) * 0.3 + 0.7;
+      const curtain3 = Math.sin(position * 8 + time * 1.1) * 0.2 + 0.8;
 
-          // Multiply curtains for varied brightness across the strip
-          const brightness =
-            curtain1 *
-            curtain2 *
-            curtain3 *
-            props.intensity *
-            (0.3 + Math.sin(time * 0.5) * 0.15 + 0.55);
+      // Multiply curtains for varied brightness across the strip
+      const brightness =
+        curtain1 *
+        curtain2 *
+        curtain3 *
+        props.intensity *
+        (0.3 + Math.sin(time * 0.5) * 0.15 + 0.55);
 
-          string.setPixel(
-            i,
-            Math.round(r * brightness),
-            Math.round(g * brightness),
-            Math.round(b * brightness),
-          );
-        }
-      }),
-    [string, props.speed, props.intensity, props.colorSpread],
-  );
+      string.setPixel(
+        i,
+        Math.round(r * brightness),
+        Math.round(g * brightness),
+        Math.round(b * brightness),
+      );
+    }
+  });
 
   return null;
 }

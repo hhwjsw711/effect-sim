@@ -1,9 +1,7 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
 import type { z } from "zod";
-import { autorun } from "mobx";
-import { useEffect } from "react";
-import { useEffectContext } from "../EffectProvider";
+import { useEffectContext, useEffectFrame } from "../EffectProvider";
 
 function lerpColor(
   color1: readonly [number, number, number],
@@ -50,48 +48,34 @@ export function CycleSine({
 }) {
   const model = useEffectContext();
 
-  useEffect(
-    () =>
-      autorun(() => {
-        const time = model.effectPlaybackRatio * props.speed * Math.PI * 2;
+  useEffectFrame(() => {
+    const time = model.effectPlaybackRatio * props.speed * Math.PI * 2;
 
-        for (let i = 0; i < string.ledCount; i++) {
-          const position = i / string.ledCount;
+    for (let i = 0; i < string.ledCount; i++) {
+      const position = i / string.ledCount;
 
-          // Base phase offset based on position
-          const baseOffset = position * props.spread;
+      // Base phase offset based on position
+      const baseOffset = position * props.spread;
 
-          // Sine wave that oscillates the offset
-          const sineOffset =
-            Math.sin(time * props.waveSpeed + position * props.wavelength) *
-            props.waveAmplitude;
+      // Sine wave that oscillates the offset
+      const sineOffset =
+        Math.sin(time * props.waveSpeed + position * props.wavelength) *
+        props.waveAmplitude;
 
-          // Combined phase: base offset + sine wave offset + time-based cycling
-          const phase = (baseOffset + sineOffset + time * 0.1) % 1;
+      // Combined phase: base offset + sine wave offset + time-based cycling
+      const phase = (baseOffset + sineOffset + time * 0.1) % 1;
 
-          // Get color from the 3-color cycle
-          const [r, g, b] = getCycleColor(
-            phase,
-            props.color1,
-            props.color2,
-            props.color3,
-          );
+      // Get color from the 3-color cycle
+      const [r, g, b] = getCycleColor(
+        phase,
+        props.color1,
+        props.color2,
+        props.color3,
+      );
 
-          string.setPixel(i, r, g, b);
-        }
-      }),
-    [
-      string,
-      props.speed,
-      props.spread,
-      props.waveSpeed,
-      props.wavelength,
-      props.waveAmplitude,
-      props.color1,
-      props.color2,
-      props.color3,
-    ],
-  );
+      string.setPixel(i, r, g, b);
+    }
+  });
 
   return null;
 }

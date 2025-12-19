@@ -1,11 +1,8 @@
 import type { StringLedDataApi } from "../../../data/StringLedDataModel";
 import { stringEffectDefinitions } from "../stringEffectDefinitions";
-import { seededRandom } from "../../../../shared/random";
 import type { z } from "zod";
 import { useRef } from "react";
-import { useEffectContext } from "../EffectProvider";
-import { autorun } from "mobx";
-import { useEffect } from "react";
+import { useEffectFrame } from "../EffectProvider";
 
 // Fire color palette - maps heat (0-1) to RGB
 // Black → Dark Red → Red → Orange → Yellow → White
@@ -39,60 +36,51 @@ export function Fire({
   string: StringLedDataApi;
   props?: z.infer<typeof stringEffectDefinitions.fire.props>;
 }) {
-  const model = useEffectContext();
   const heatMapRef = useRef<number[]>([]);
 
-  useEffect(
-    () =>
-      autorun(() => {
-        const ledCount = string.ledCount;
+  useEffectFrame(() => {
+    const ledCount = string.ledCount;
 
-        // Initialize heat map if needed
-        if (heatMapRef.current.length !== ledCount)
-          heatMapRef.current = new Array(ledCount).fill(0);
+    // Initialize heat map if needed
+    if (heatMapRef.current.length !== ledCount)
+      heatMapRef.current = new Array(ledCount).fill(0);
 
-        const heat = heatMapRef.current;
-        const frame = model.effectFrame;
+    const heat = heatMapRef.current;
 
-        // Step 1: Cool down every cell slightly
-        for (let i = 0; i < ledCount; i++) {
-          const cooldown =
-            props.cooling * (1 + seededRandom(frame * ledCount + i, 0) * 0.5);
-          heat[i] = Math.max(0, heat[i] - cooldown);
-        }
+    // Step 1: Cool down every cell slightly
+    for (let i = 0; i < ledCount; i++) {
+      const cooldown = props.cooling * (1 + Math.random() * 0.5);
+      heat[i] = Math.max(0, heat[i] - cooldown);
+    }
 
-        // Step 2: Heat rises - each cell gets heat from cells "below" it
-        // We go from top to bottom so we don't propagate heat twice
-        for (let i = ledCount - 1; i >= 2; i--) {
-          heat[i] =
-            (heat[i - 1] + heat[i - 2] + heat[i - 2]) / 3 +
-            (seededRandom(frame * 1000 + i, 1) - 0.5) * 0.05;
-        }
+    // Step 2: Heat rises - each cell gets heat from cells "below" it
+    // We go from top to bottom so we don't propagate heat twice
+    for (let i = ledCount - 1; i >= 2; i--) {
+      heat[i] =
+        (heat[i - 1] + heat[i - 2] + heat[i - 2]) / 3 +
+        (Math.random() - 0.5) * 0.05;
+    }
 
-        // Step 3: Randomly ignite new sparks at the bottom
-        const sparkChance = props.sparking;
-        for (let i = 0; i < Math.ceil(ledCount * 0.1); i++) {
-          if (seededRandom(frame * 100 + i, 2) < sparkChance) {
-            const sparkIndex = Math.floor(
-              seededRandom(frame * 100 + i, 3) * Math.min(7, ledCount * 0.15),
-            );
-            heat[sparkIndex] = Math.min(
-              1,
-              heat[sparkIndex] +
-                0.5 +
-                seededRandom(frame * 100 + i, 4) * 0.5 * props.intensity,
-            );
-          }
-        }
+    // Step 3: Randomly ignite new sparks at the bottom
+    const sparkChance = props.sparking;
+    for (let i = 0; i < Math.ceil(ledCount * 0.1); i++) {
+      if (Math.random() < sparkChance) {
+        const sparkIndex = Math.floor(
+          Math.random() * Math.min(7, ledCount * 0.15),
+        );
+        heat[sparkIndex] = Math.min(
+          1,
+          heat[sparkIndex] + 0.5 + Math.random() * 0.5 * props.intensity,
+        );
+      }
+    }
 
-        // Step 4: Map heat to colors and render
-        for (let i = 0; i < ledCount; i++) {
-          const [r, g, b] = heatToColor(heat[i] * props.intensity);
-          string.setPixel(i, r, g, b);
-        }
-      }),
-    [string, props.cooling, props.sparking, props.intensity],
-  );
+    // Step 4: Map heat to colors and render
+    for (let i = 0; i < ledCount; i++) {
+      const [r, g, b] = heatToColor(heat[i] * props.intensity);
+      string.setPixel(i, r, g, b);
+    }
+  });
 
   return null;
 }
