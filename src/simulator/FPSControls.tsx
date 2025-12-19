@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { PointerLockControls as PointerLockControlsImpl } from "three-stdlib";
 import { PointerLockControls } from "@react-three/drei";
 import { Vector3 } from "three";
 
 export function FPSControls() {
   const { camera } = useThree();
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<PointerLockControlsImpl | null>(null);
   const moveForward = useRef(false);
   const moveBackward = useRef(false);
   const moveLeft = useRef(false);
@@ -15,45 +16,37 @@ export function FPSControls() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      switch (event.code) {
-        case "ArrowUp":
-        case "KeyW":
-          moveForward.current = true;
-          break;
-        case "ArrowLeft":
-        case "KeyA":
-          moveLeft.current = true;
-          break;
-        case "ArrowDown":
-        case "KeyS":
-          moveBackward.current = true;
-          break;
-        case "ArrowRight":
-        case "KeyD":
-          moveRight.current = true;
-          break;
+      if (event.code === "ArrowUp" || event.code === "KeyW") {
+        moveForward.current = true;
+        return;
       }
+      if (event.code === "ArrowLeft" || event.code === "KeyA") {
+        moveLeft.current = true;
+        return;
+      }
+      if (event.code === "ArrowDown" || event.code === "KeyS") {
+        moveBackward.current = true;
+        return;
+      }
+      if (event.code === "ArrowRight" || event.code === "KeyD")
+        moveRight.current = true;
     };
 
     const onKeyUp = (event: KeyboardEvent) => {
-      switch (event.code) {
-        case "ArrowUp":
-        case "KeyW":
-          moveForward.current = false;
-          break;
-        case "ArrowLeft":
-        case "KeyA":
-          moveLeft.current = false;
-          break;
-        case "ArrowDown":
-        case "KeyS":
-          moveBackward.current = false;
-          break;
-        case "ArrowRight":
-        case "KeyD":
-          moveRight.current = false;
-          break;
+      if (event.code === "ArrowUp" || event.code === "KeyW") {
+        moveForward.current = false;
+        return;
       }
+      if (event.code === "ArrowLeft" || event.code === "KeyA") {
+        moveLeft.current = false;
+        return;
+      }
+      if (event.code === "ArrowDown" || event.code === "KeyS") {
+        moveBackward.current = false;
+        return;
+      }
+      if (event.code === "ArrowRight" || event.code === "KeyD")
+        moveRight.current = false;
     };
 
     document.addEventListener("keydown", onKeyDown);

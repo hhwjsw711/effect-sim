@@ -140,17 +140,16 @@ export function LineLed({
         transparent: true,
         depthWrite: !lightsOnTop,
       }),
-    [lightsOnTop],
+    [lightsOnTop, size.width, size.height, dpr],
   );
 
   // Update resolution uniform on resize
   useEffect(() => {
-    if (material.uniforms.resolution) {
+    if (material.uniforms.resolution)
       material.uniforms.resolution.value.set(
         size.width * dpr,
         size.height * dpr,
       );
-    }
   }, [size, dpr, material]);
 
   // Store material ref
