@@ -10,14 +10,36 @@ export type StringsMap = Map<
 >;
 
 export class LedDataStoreModel {
+  _stringModels = new Map<Id<"nodes">, StringLedDataModel>();
+  _virtualModels = new Map<Id<"nodes">, VirtualStringLedDataModel>();
+
   constructor(public project: ProjectModel) {
-    makeAutoObservable(this);
+    makeAutoObservable<
+      LedDataStoreModel,
+      "_stringModels" | "_virtualModels"
+    >(this, {
+      _stringModels: false,
+      _virtualModels: false,
+    });
   }
 
-  get strings() {
-    return this.project.strings.map(
-      (string) => new StringLedDataModel(this, string),
-    );
+  get strings(): StringLedDataModel[] {
+    // Sync cached models with current project strings
+    const currentIds = new Set(this.project.strings.map((s) => s._id));
+
+    // Remove models for deleted strings
+    for (const id of this._stringModels.keys())
+      if (!currentIds.has(id)) this._stringModels.delete(id);
+
+    // Create or reuse models for current strings
+    return this.project.strings.map((string) => {
+      let model = this._stringModels.get(string._id);
+      if (!model) {
+        model = new StringLedDataModel(string);
+        this._stringModels.set(string._id, model);
+      }
+      return model;
+    });
   }
 
   get stringsMap(): Map<Id<"nodes">, StringLedDataModel> {
@@ -26,10 +48,23 @@ export class LedDataStoreModel {
     return map;
   }
 
-  get virtuals() {
-    return this.project.virtualStrings.map(
-      (virtualString) => new VirtualStringLedDataModel(this, virtualString),
-    );
+  get virtuals(): VirtualStringLedDataModel[] {
+    // Sync cached models with current project virtual strings
+    const currentIds = new Set(this.project.virtualStrings.map((v) => v._id));
+
+    // Remove models for deleted virtuals
+    for (const id of this._virtualModels.keys())
+      if (!currentIds.has(id)) this._virtualModels.delete(id);
+
+    // Create or reuse models for current virtual strings
+    return this.project.virtualStrings.map((virtualString) => {
+      let model = this._virtualModels.get(virtualString._id);
+      if (!model) {
+        model = new VirtualStringLedDataModel(this, virtualString);
+        this._virtualModels.set(virtualString._id, model);
+      }
+      return model;
+    });
   }
 
   get stringsAndVirtuals(): StringLedDataApi[] {
