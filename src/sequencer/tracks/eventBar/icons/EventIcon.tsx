@@ -12,6 +12,7 @@ import { TurnOnIcon } from "./TurnOnIcon";
 import { TurnOffIcon } from "./TurnOffIcon";
 import { ToggleIcon } from "./ToggleIcon";
 import { TurnOnThenOffIcon } from "./TurnOnThenOffIcon";
+import { TurnOffThenOnIcon } from "./TurnOffThenOnIcon";
 
 interface EventIconProps {
   event: AllTrackEventModels;
@@ -75,6 +76,9 @@ export function EventIcon({ event, color, size = 14 }: EventIconProps) {
 
     if (event.effectDefinitionId === switchEffectDefinitionIds.turnOnThenOff)
       return <TurnOnThenOffIcon color={color} size={size} />;
+
+    if (event.effectDefinitionId === switchEffectDefinitionIds.turnOffThenOn)
+      return <TurnOffThenOnIcon color={color} size={size} />;
 
     // Default icon for switch effects
     return <IconPower size={size} style={{ color }} />;

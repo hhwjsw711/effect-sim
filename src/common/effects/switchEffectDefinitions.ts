@@ -3,6 +3,7 @@ import { TurnOn } from "./switch/TurnOn";
 import { TurnOff } from "./switch/TurnOff";
 import { Toggle } from "./switch/Toggle";
 import { TurnOnThenOff } from "./switch/TurnOnThenOff";
+import { TurnOffThenOn } from "./switch/TurnOffThenOn";
 import { z } from "zod";
 import { inspectableProps } from "../props/inspectableProps";
 import type { SwitchNodeModel } from "../../../shared/models/SwitchNodeModel";
@@ -25,6 +26,7 @@ export const switchEffectDefinitionIds = produceLiteral([
   "turnOff",
   "toggle",
   "turnOnThenOff",
+  "turnOffThenOn",
 ]);
 
 const effectProps = {
@@ -32,6 +34,7 @@ const effectProps = {
   turnOff: z.object({}),
   toggle: z.object({}),
   turnOnThenOff: z.object({}),
+  turnOffThenOn: z.object({}),
 } satisfies Record<
   keyof typeof switchEffectDefinitionIds,
   z.ZodObject<z.ZodRawShape>
@@ -64,6 +67,13 @@ export const switchEffectDefinitions = {
     name: "Turn On Then Off",
     component: TurnOnThenOff,
     props: effectProps.turnOnThenOff,
+    defaultProps: {},
+  },
+  turnOffThenOn: {
+    id: switchEffectDefinitionIds.turnOffThenOn,
+    name: "Turn Off Then On",
+    component: TurnOffThenOn,
+    props: effectProps.turnOffThenOn,
     defaultProps: {},
   },
 } satisfies Record<
