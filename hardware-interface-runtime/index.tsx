@@ -14,7 +14,7 @@ polyfillRAF();
 const convexUrl = ensure(
   process.env.VITE_CONVEX_URL,
   `missing VITE_CONVEX_URL environment variable`,
-); // || `https://aromatic-cardinal-985.convex.cloud`;
+);
 
 const { projectId, playlistId } = await runSetupCLI(convexUrl);
 const convex = new ConvexReactClient(convexUrl);

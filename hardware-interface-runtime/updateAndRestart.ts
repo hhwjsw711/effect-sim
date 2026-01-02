@@ -1,13 +1,12 @@
 #!/usr/bin/env bun
 /**
- * Update and restart script
- * This script is spawned as a detached process when an update is detected.
- * It waits for the parent to exit, pulls updates, installs dependencies, and restarts.
+ * Update script invoked by the auto-updater. It waits for the parent to exit,
+ * applies updates (git pull + bun install), then exits so launchd can restart
+ * the single HWIR instance.
  *
  * Usage: bun updateAndRestart.ts --project <projectId> --playlist <playlistId>
  */
 
-import { spawn } from "child_process";
 import { promisify } from "util";
 import { exec } from "child_process";
 import { Command } from "commander";
@@ -80,57 +79,11 @@ async function main() {
       log("Attempting to restart anyway...");
     }
 
-    // Wait a moment before restart
-    log("Waiting 2 seconds before restart...");
+    // Wait a moment before exit
+    log("Waiting 2 seconds before exit...");
     await sleep(2000);
 
-    // Build the restart command with the saved settings
-    const hwirArgs: string[] = [];
-    if (projectId) {
-      hwirArgs.push("-p", projectId);
-      if (playlistId) hwirArgs.push("-l", playlistId);
-    }
-
-    log(`Restarting with args: ${hwirArgs.join(" ") || "(none)"}`);
-
-    // On Windows, use 'start' command to truly detach the process
-    // On Unix, use standard detached spawn
-    const isWindows = process.platform === "win32";
-
-    if (isWindows) {
-      // Use 'start' to create a new window that persists
-      const startArgs = [
-        "/c",
-        "start",
-        '""', // Empty title (required by start)
-        "bun",
-        "run",
-        "hwir",
-        ...hwirArgs,
-      ];
-      log(`Windows spawn: cmd ${startArgs.join(" ")}`);
-
-      const child = spawn("cmd", startArgs, {
-        detached: true,
-        stdio: "ignore",
-        windowsHide: false,
-      });
-      child.unref();
-    } else {
-      const child = spawn("bun", ["run", "hwir", ...hwirArgs], {
-        detached: true,
-        stdio: "ignore",
-      });
-      child.unref();
-    }
-
-    log("Application restart initiated!");
-    log("Update script complete. Exiting in 2 seconds...");
-
-    // Give time for the spawn to complete before exiting
-    await sleep(2000);
-
-    log("Goodbye!");
+    log("Update complete. Exiting so supervisor can restart the process...");
     process.exit(0);
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
